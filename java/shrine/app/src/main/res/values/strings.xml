@@ -1,10 +1,11 @@
 <resources>
-    <string name="shr_app_name">COMO EN CASA</string>
+    <string name="shr_app_name">Como en casa</string>
     <string name="shr_hint_username">E-mail</string>
     <string name="shr_hint_password">Contraseña</string>
-    <string name="shr_button_next">Next</string>
-    <string name="shr_button_cancel">Cancel</string>
-    <string name="shr_error_password">Password must contain at least 8 characters.</string>
+    <string name="shr_button_login">Iniciar Sesión</string>
+    <string name="shr_button_register">¿No estás registado aún? Regístrate!</string>
+    <string name="shr_button_forgotten_password">¿Olvidaste tu contraseña?</string>
+    <string name="shr_error_password">La contraseña no puede ser vacia.</string>
     <string name="shr_filter_title">Filter</string>
     <string name="shr_search_title">Search</string>
     <string name="shr_product_title">Title</string>
@@ -19,4 +20,7 @@
     <string name="shr_bottoms_label">Bottoms</string>
     <string name="shr_dresses_label">Dresses</string>
     <string name="shr_account_label">My Account</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
