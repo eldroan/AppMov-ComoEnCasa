@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity implements NavigationHost {
 
@@ -18,8 +19,19 @@ public class MainActivity extends AppCompatActivity implements NavigationHost {
                     .add(R.id.container, new LoginFragment())
                     .commit();
         }
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.app_toolbar);
+        setSupportActionBar(myToolbar);
+
+
+
     }
 
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     /**
      * Navigate to the given fragment.
      *

@@ -7,6 +7,7 @@ import android.support.design.button.MaterialButton;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,11 +36,18 @@ public class LoginFragment extends Fragment {
                     passwordTextInput.setError(getString(R.string.shr_error_password));
                 } else {
                     passwordTextInput.setError(null); // Clear the error
-                    ((NavigationHost) getActivity()).navigateTo(new ProductGridFragment(), false); // Navigate to the next Fragment
+                    // Navigate to the next Fragment
                 }
             }
 
 
+        });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((NavigationHost) getActivity()).navigateTo(new RegisterFragment(), true); // Navigate to the next Fragment
+            }
         });
 
         // Limpiar el mensaje de error
@@ -66,6 +74,8 @@ public class LoginFragment extends Fragment {
 
             }
         });
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
         return view;
     }
 

@@ -23,4 +23,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--  Crear cuenta  -->
+    <string name="shr_take_picture">Tomar foto</string>
+    <string name="shr_select_picture">Elegir foto</string>
+
 </resources>
