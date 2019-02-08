@@ -1,0 +1,20 @@
+package com.google.codelabs.mdc.java.shrine.Model;
+
+import android.graphics.Bitmap;
+
+import java.util.Date;
+
+public class VirtualTable {
+    public String title;
+    public String description;
+    public Bitmap image;
+    public float price;
+    public int currentlyEating;
+    public int maxEating;
+    public int paymentMethod;
+    public Date deadlineForEntering;
+    public Date deliveryTime;
+    public String[] tags;
+    public double latitude;
+    public double longitude;
+}
