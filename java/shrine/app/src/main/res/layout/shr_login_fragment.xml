@@ -60,10 +60,6 @@
                 android:inputType="textPassword"/>
         </android.support.design.widget.TextInputLayout>
 
-
-
-
-
         <android.support.design.button.MaterialButton
             android:id="@+id/login_button"
             android:layout_width="match_parent"
@@ -77,9 +73,7 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/shr_button_register"
-
-            />
+            android:text="@string/shr_button_register"/>
 
     </LinearLayout>
 </ScrollView>

@@ -11,6 +11,7 @@
     <string name="shr_error_password">La contraseña no puede ser vacia.</string>
     <string name="shr_filter_title">Filter</string>
     <string name="shr_search_title">Search</string>
+    <string name="shr_filter">Filtrar</string>
     <string name="shr_product_title">Title</string>
     <string name="shr_product_description">Secondary text</string>
 
