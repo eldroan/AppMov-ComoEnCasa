@@ -10,11 +10,12 @@ public class InsideMenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shr_inside_menu_activity);
-
+        SeleccionarPlatoFragment fr = new SeleccionarPlatoFragment();
+        fr.myContext = this.getApplicationContext();
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.drawer_layout, new SeleccionarPlatoFragment())
+                    .add(R.id.drawer_layout, fr)
                     .commit();
         }
         Toolbar myToolbar = (Toolbar) findViewById(R.id.appbar);
