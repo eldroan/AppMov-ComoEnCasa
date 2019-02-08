@@ -23,6 +23,16 @@
             android:layout_height="wrap_content"
             android:text="@string/shr_filter"/>
 
+
+        <ListView
+
+            android:id="@+id/listViewVirtualTables"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:choiceMode="singleChoice">
+
+        </ListView>
+
     </LinearLayout>
 
 
