@@ -17,11 +17,21 @@
         android:layout_marginTop="48dp">
 
         <android.support.design.button.MaterialButton
-            android:id="@+id/take_filter_button2"
+            android:id="@+id/filter_button"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/shr_filter"/>
+
+
+        <ListView
+
+            android:id="@+id/listViewVirtualTables"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:choiceMode="singleChoice">
+
+        </ListView>
 
     </LinearLayout>
 
