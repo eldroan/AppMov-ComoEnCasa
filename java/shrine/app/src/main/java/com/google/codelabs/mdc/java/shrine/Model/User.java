@@ -6,6 +6,6 @@ public class User {
     public String name;
     public String surname;
     public String email;
-    public float score;
+    public double score;
     public Bitmap image;
 }
