@@ -11,6 +11,7 @@ public class User implements Parcelable {
     public double score;
     public Bitmap image;
 
+    public User() {}
     protected User(Parcel in) {
         name = in.readString();
         surname = in.readString();

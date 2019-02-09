@@ -5,12 +5,14 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.google.codelabs.mdc.java.shrine.Model.User;
+import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
@@ -24,7 +26,6 @@ public  class UserDAO {
     public interface IUserCreation{
         void connectionFailed();
         void creationSucceded(); //
-        void usernameTaken();
         void emailTaken();
         void creationFailed(ParseException e);
     }
@@ -86,45 +87,60 @@ public  class UserDAO {
 
                 }else{
                     //Se creo mal el usuario
-                    callbackReceiver.creationFailed(e);
+                    if(e.getCode() == ParseException.ACCOUNT_ALREADY_LINKED || e.getCode() == ParseException.EMAIL_TAKEN || e.getCode() == ParseException.USERNAME_TAKEN)
+                        callbackReceiver.emailTaken();
+                    else if (e.getCode() == ParseException.CONNECTION_FAILED)
+                        callbackReceiver.connectionFailed();
+                    else
+                        callbackReceiver.creationFailed(e);
                 }
             }
         });
     }
 
     public static void loginUser(String username, String password, final IUserLogin callbackReceiver) {
+        ParseUser.getCurrentUser().logOut();
+
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             public void done(final ParseUser user, ParseException e) {
-                if (user != null) {
+                if (e == null && user != null) {
                     // Logueo con exito, hay que construir el usuario del modelo
                     //Primero recuperamos la imagen del usuario;
-                    ParseFile image = (ParseFile) user.getParseFile("imageFileName");
-
-                    image.getDataInBackground(new GetDataCallback() {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("ProfileImage");
+                    query.whereFullText("username",user.getEmail()).getFirstInBackground(new GetCallback<ParseObject>() {
                         @Override
-                        public void done(byte[] data, ParseException e) {
+                        public void done(ParseObject object, ParseException e) {
+
                             if(e == null){
-                                //Encontro la imagen, ahora contruyo el bitmap
-                                Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                Bitmap mutableBitmap = bmp.copy(Bitmap.Config.ARGB_8888, true);
+                                ParseFile pf = object.getParseFile("imagepath");
+                                pf.getDataInBackground(new GetDataCallback() {
+                                    @Override
+                                    public void done(byte[] data, ParseException e) {
+                                        if(e == null){
+                                            Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                            Bitmap mutableBitmap = bmp.copy(Bitmap.Config.ARGB_8888, true);
+                                            User modelUser = new User();
+                                            modelUser.email = user.getEmail();
+                                            modelUser.name = user.getString("name");
+                                            modelUser.surname = user.getString("surname");
+                                            modelUser.score = user.getDouble("score");
+                                            modelUser.image = mutableBitmap;
 
-                                //Ahora puedo crear el usuario y setearle el bitmap
-                                User modelUser = new User();
-                                modelUser.email = user.getEmail();
-                                modelUser.name = user.getString("name");
-                                modelUser.surname = user.getString("surname");
-                                modelUser.score = user.getDouble("score");
-                                modelUser.image = mutableBitmap;
+                                            callbackReceiver.loginSuccesful(modelUser);
+                                        }else{
+                                            callbackReceiver.loginFailed(e);
+                                        }
 
-                                callbackReceiver.loginSuccesful(modelUser);
+                                    }
+                                });
                             }else{
-                                //No encontro la imagen, fallo el login
                                 callbackReceiver.loginFailed(e);
+
                             }
+
                         }
                     });
-
-
+//
                 } else {
                     // fallo el login
                     callbackReceiver.loginFailed(e);
