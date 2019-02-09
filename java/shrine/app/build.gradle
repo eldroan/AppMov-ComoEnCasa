@@ -19,6 +19,11 @@ android {
     }
 }
 
+repositories{
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
 dependencies {
     api 'com.android.support:design:28.0.0-alpha3'
     implementation 'com.android.support:support-v4:28.0.0-alpha3'

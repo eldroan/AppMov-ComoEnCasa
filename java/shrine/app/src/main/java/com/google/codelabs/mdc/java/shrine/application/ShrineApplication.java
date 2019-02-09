@@ -27,9 +27,9 @@ public class ShrineApplication extends Application {
         super.onCreate();
 
         Parse.initialize(new Parse.Configuration.Builder(this)
-                .applicationId("j9A9UOZTzG4BRYYNb5JcGR5De3pCOQbA8OCMZcQg")
-                .clientKey("0Oa3us8Q0EZulKZuaMN5Vlh1StBDAW1PDcbuVeWP")
-                .server("https://parseapi.back4app.com")
+                .applicationId("s2BxcpUuPbRFlem5YwqFJX4xM6sRwydjMz5XoQCw")
+                .clientKey("1ds1wMRi6CrRHGucC0M2it0RBSuhxgqwE32Kxp94")
+                .server("https://parseapi.back4app.com/")
                 .build()
         );
         instance = this;
