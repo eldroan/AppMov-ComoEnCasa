@@ -56,36 +56,39 @@
         </LinearLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/name_field"
+            android:id="@+id/name_field_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/shr_hint_name">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/name_field_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:maxLines="1" />
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/surname_field"
+            android:id="@+id/surname_field_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/shr_hint_surname">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/surname_field_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:maxLines="1" />
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/email_field"
+            android:id="@+id/email_field_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/shr_hint_username">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/email_field_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"

@@ -8,7 +8,7 @@
     <string name="shr_button_login">Iniciar Sesión</string>
     <string name="shr_button_register">¿No estás registado aún? Regístrate!</string>
     <string name="shr_button_forgotten_password">¿Olvidaste tu contraseña?</string>
-    <string name="shr_error_password">La contraseña no puede ser vacia.</string>
+    <string name="shr_error_password">Las contraseñas deben ser mayor a 8 caracteres, contener mayusculas, contener minusculas y contener al menos un numero</string>
     <string name="shr_filter_title">Filter</string>
     <string name="shr_search_title">Search</string>
     <string name="shr_filter">Filtrar</string>
