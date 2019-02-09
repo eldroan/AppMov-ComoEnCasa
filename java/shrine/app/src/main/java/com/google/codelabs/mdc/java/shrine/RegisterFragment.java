@@ -207,20 +207,24 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
     @Override
     public void connectionFailed() {
         createUserButton.setClickable(true);
-        Toast.makeText(getActivity().getApplicationContext(),"Fallo la conexion",Toast.LENGTH_SHORT);
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                final Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Fallo la conexion", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
     }
 
     @Override
     public void creationSucceded() {
         createUserButton.setClickable(true);
         //Toast.makeText(getActivity().getApplicationContext(),"Creacion de usuario exitosa",Toast.LENGTH_SHORT);
-
-    }
-
-    @Override
-    public void usernameTaken() {
-        createUserButton.setClickable(true);
-        //Toast.makeText(getActivity().getApplicationContext(),"Username en uso",Toast.LENGTH_SHORT);
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                final Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Creacion de usuario exitosa", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
 
     }
 
@@ -228,12 +232,24 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
     public void emailTaken() {
         createUserButton.setClickable(true);
         //Toast.makeText(getContext(),"Email en uso",Toast.LENGTH_SHORT);
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                final Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Email en uso", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
     }
 
     @Override
-    public void creationFailed(ParseException e) {
+    public void creationFailed(final ParseException e) {
         createUserButton.setClickable(true);
         //Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT);
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                final Toast toast = Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
 
     }
 
