@@ -7,8 +7,10 @@ import android.util.Log;
 import com.google.codelabs.mdc.java.shrine.Model.User;
 import com.parse.GetDataCallback;
 import com.parse.LogInCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
@@ -33,65 +35,63 @@ public  class UserDAO {
     }
 
     public static void createUser(final User localUser, final String password, final IUserCreation callbackReceiver) {
+        ParseUser.getCurrentUser().logOut();
 
 
-
-        //Antes de guardar el usuario guardo la imagen de perfil
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        localUser.image.compress(Bitmap.CompressFormat.PNG,100,stream);
-
-        final ParseFile parseImage = new ParseFile("image"+localUser.email.hashCode()+".jpg", stream.toByteArray());
-        parseImage.saveInBackground(new SaveCallback() {
+        ParseUser user = new ParseUser();
+        user.setUsername(localUser.email);
+        user.setPassword(password);
+        user.setEmail(localUser.email);
+        user.put("name",localUser.name);
+        user.put("surname" , localUser.surname);
+        user.put("score",0d);
+        user.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {
                 if(e == null){
-                    Log.d("parse","Se guardo BIEN la imagen");
-                    //Ahora puedo guardar el usuario;
-
-                    ParseUser user = new ParseUser();
-                    user.setUsername(localUser.email);
-                    user.setPassword(password);
-                    user.setEmail(localUser.email);
-                    user.put("name",localUser.name);
-                    user.put("surname" , localUser.surname);
-                    user.put("imageFileName",parseImage);
-                    user.put("score",0d);
-
-
-                    user.signUpInBackground(new SignUpCallback() {
+                    //Se creo bien el usuario, ahora hay que guardar la imagen
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    Bitmap newbitmap = Bitmap.createScaledBitmap(localUser.image, 200, 200, true);
+                    stream = new ByteArrayOutputStream();
+                    newbitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] image = stream.toByteArray();
+                    final ParseFile parseImage = new ParseFile("image"+localUser.email.hashCode()+".png", image);
+                    parseImage.saveInBackground(new SaveCallback() {
+                        @Override
                         public void done(ParseException e) {
-                            if (e == null) {
-                                // Se creo bien
-                                callbackReceiver.creationSucceded();
-                            } else {
-                                //Fallo la creacion
+                            if(e == null){
+                                //La imagen se subio bien
+                                ParseObject profileImage = new ParseObject("ProfileImage");
+                                profileImage.put("username",localUser.email);
+                                profileImage.put("imagepath",parseImage);
 
-                                switch (e.getCode()){
-                                    case ParseException.EMAIL_TAKEN:
-                                        callbackReceiver.emailTaken();
-                                    case ParseException.CONNECTION_FAILED:
-                                        callbackReceiver.connectionFailed();
-                                        break;
-                                    case ParseException.USERNAME_TAKEN:
-                                        callbackReceiver.usernameTaken();
-                                        break;
-                                    default:
-                                        callbackReceiver.creationFailed(e);
-                                        break;
-                                }
+                                profileImage.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if(e == null){
+                                            callbackReceiver.creationSucceded();
+                                        }else{
+                                            callbackReceiver.creationFailed(e);
+                                        }
+                                    }
+                                });
+
+
+                            }else{
+                                //La imagen se subio mal
+                                callbackReceiver.creationFailed(e);
                             }
                         }
                     });
 
                 }else{
-                    Log.d("parse","Se guardo MAL la imagen");
+                    //Se creo mal el usuario
                     callbackReceiver.creationFailed(e);
-
                 }
             }
         });
-
     }
+
     public static void loginUser(String username, String password, final IUserLogin callbackReceiver) {
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             public void done(final ParseUser user, ParseException e) {

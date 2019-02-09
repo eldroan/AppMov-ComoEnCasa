@@ -31,5 +31,14 @@
     <!--  Crear cuenta  -->
     <string name="shr_take_picture">Tomar foto</string>
     <string name="shr_select_picture">Elegir foto</string>
+    <string name="shr_register_user_buttontext">Registrar usuario</string>
+    <string name="shr_error_password_confirmation">Las contraseñas no coinciden</string>
+    <string name="shr_error_name">Debe ingresar su nombre</string>
+    <string name="shr_error_surname">Debe ingresar su apellido</string>
+    <string name="shr_error_email">Debe ingresar su correo electrónico</string>
+
+
+
+
 
 </resources>
