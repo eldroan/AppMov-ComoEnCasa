@@ -5,10 +5,11 @@ import android.graphics.Bitmap;
 import java.util.Date;
 
 public class VirtualTable {
+
     public String title;
     public String description;
     public Bitmap image;
-    public float price;
+    public double price;
     public int currentlyEating;
     public int maxEating;
     public int paymentMethod;
@@ -17,4 +18,5 @@ public class VirtualTable {
     public String[] tags;
     public double latitude;
     public double longitude;
+    public User chef;
 }
