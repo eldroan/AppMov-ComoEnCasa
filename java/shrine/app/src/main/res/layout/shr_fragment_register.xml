@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -55,36 +56,39 @@
         </LinearLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/name_field"
+            android:id="@+id/name_field_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/shr_hint_name">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/name_field_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:maxLines="1" />
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/surname_field"
+            android:id="@+id/surname_field_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/shr_hint_surname">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/surname_field_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:maxLines="1" />
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/email_field"
+            android:id="@+id/email_field_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/shr_hint_username">
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/email_field_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
@@ -114,5 +118,11 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"/>
         </android.support.design.widget.TextInputLayout>
+        <android.support.design.button.MaterialButton
+            android:id="@+id/register_user_button"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/shr_register_user_buttontext"/>
     </LinearLayout>
 </ScrollView>

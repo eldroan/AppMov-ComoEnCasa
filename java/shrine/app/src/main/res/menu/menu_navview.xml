@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <group android:checkableBehavior="single">
+            <item
+                android:id="@+id/inicio"
+                android:icon="@drawable/ic_home_black_24dp"
+                android:title="Inicio"/>
+            <item
+                android:id="@+id/direcciones"
+                android:icon="@drawable/ic_location_on_black_24dp"
+                android:title="Direcciones"/>
+            <item
+                android:id="@+id/mis_pedidos"
+                android:icon="@drawable/ic_local_shipping_black_24dp"
+                android:title="Mis pedidos"/>
+            <item
+                android:id="@+id/favoritos"
+                android:icon="@drawable/ic_favorite_black_24dp"
+                android:title="Favoritos"/>
+            <item
+                android:id="@+id/mi_cuenta"
+                android:icon="@drawable/ic_account_circle_black_24dp"
+                android:title="Mi cuenta"/>
+            <item
+                android:id="@+id/ayuda"
+                android:icon="@drawable/ic_help_black_24dp"
+                android:title="Ayuda"/>
+        </group>
+
+        <item
+            android:id="@+id/navigation_subheader"
+            android:title="Otras opciones">
+            <menu>
+                <item
+                    android:id="@+id/cambiar_rol"
+                    android:icon="@drawable/ic_sync_black_24dp"
+                    android:title="cambiar rol"/>
+
+
+            </menu>
+        </item>
+    </menu>
+
+
