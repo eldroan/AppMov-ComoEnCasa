@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+//import android.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost,IT
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.container, new LoginFragment())
+                    .add(R.id.container, new FilterVirtualTableFragment())
                     .commit();
         }
         Toolbar myToolbar = (Toolbar) findViewById(R.id.app_toolbar);

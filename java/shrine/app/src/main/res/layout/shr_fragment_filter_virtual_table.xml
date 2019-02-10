@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".FilterVirtualTableFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:layout_marginTop="48dp">
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal"/>
+
+        <!--fragment
+            android:id="@+id/mapfragment"
+            class="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal" /-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/shr_radius"
+                android:textSize="18dp"
+                style="@style/Theme.Shrine"/>
+
+            <SeekBar
+                android:id="@+id/radio_filter_vt_seekbar"
+                android:layout_width="254dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:max="7" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Km"
+                android:textSize="18dp"
+                style="@style/Theme.Shrine"/>
+
+        </LinearLayout>
+
+
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/shr_virtual_table_title">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/title_filter_vt_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/shr_virtual_table_max_price">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/max_price_filter_vt_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal"
+            android:padding="3dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/shr_virtual_table_min_score"
+                android:textSize="18dp"
+                style="@style/Theme.Shrine"/>
+
+            <SeekBar
+                android:id="@+id/min_score_vt_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="5"
+                android:layout_gravity="center_horizontal"/>
+
+        </LinearLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/shr_date_vt">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/date_aprox_filter_vt_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1" />
+        </android.support.design.widget.TextInputLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pay_method"
+            android:textSize="18dp"
+            android:layout_marginTop="12dp"
+            style="@style/Theme.Shrine"
+            android:padding="3dp"/>
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkedButton="@+id/cash_radio_button"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_gravity="left"
+            android:layout_marginTop="5dp">
+
+
+            <RadioButton
+                android:id="@+id/cash_radio_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cash_pay_method"/>
+
+            <RadioButton
+                android:id="@+id/mercadopago_radio_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mercadopago_pay_method"/>
+        </RadioGroup>
+
+        <android.support.design.button.MaterialButton
+            android:id="@+id/filter_vt_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_marginTop="15dp"
+            app:icon="@drawable/ic_search_black_24dp"
+            android:text="@string/shr_filter"/>
+
+    </LinearLayout>
+
+</FrameLayout>

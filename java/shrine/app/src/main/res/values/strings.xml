@@ -52,5 +52,12 @@
     <string name="shr_favoritos">Favoritos</string>
     <string name="shr_mi_cuenta">Mi cuenta</string>
     <string name="shr_ayuda">Ayuda</string>
+    <string name="shr_radius">Radio</string>
+    <string name="shr_virtual_table_title">Nombre de plato</string>
+    <string name="shr_virtual_table_max_price">Precio máximo</string>
+    <string name="shr_virtual_table_min_score">Puentuación mínima</string>
+    <string name="mercadopago_pay_method">MercadoPago</string>
+    <string name="cash_pay_method">Efectivo</string>
+    <string name="pay_method">Forma de pago</string>
 
 </resources>

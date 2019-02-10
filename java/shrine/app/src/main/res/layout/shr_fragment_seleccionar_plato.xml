@@ -23,7 +23,6 @@
             android:layout_height="wrap_content"
             android:text="@string/shr_filter"/>
 
-
         <ListView
 
             android:id="@+id/listViewVirtualTables"

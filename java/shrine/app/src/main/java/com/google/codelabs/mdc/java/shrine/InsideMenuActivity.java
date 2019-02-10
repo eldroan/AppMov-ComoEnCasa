@@ -29,15 +29,6 @@ public class InsideMenuActivity extends AppCompatActivity {
                 .addToBackStack(null)
                 .commit();
 
-        /*
-        fr.myContext = this.getApplicationContext();
-        if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.drawer_layout, fr)
-                    .commit();
-        }*/
-
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.appbar);
         setSupportActionBar(myToolbar);
 
