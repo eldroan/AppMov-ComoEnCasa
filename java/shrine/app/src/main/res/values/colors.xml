@@ -7,4 +7,5 @@
     <color name="toolbarIconColor">#FFFFFF</color>
     <color name="loginPageBackgroundColor">#FFFFFF</color>
     <color name="productGridBackgroundColor">#FFFFFF</color>
+    <color name="primary_dark_material_light">#ffffff</color>
 </resources>

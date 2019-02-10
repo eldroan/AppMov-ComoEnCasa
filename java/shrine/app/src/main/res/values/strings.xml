@@ -36,9 +36,16 @@
     <string name="shr_error_name">Debe ingresar su nombre</string>
     <string name="shr_error_surname">Debe ingresar su apellido</string>
     <string name="shr_error_email">Debe ingresar su correo electrónico</string>
-
-
-
+    <string name="shr_hint_title_vt">Nombre del plato</string>
+    <string name="shr_hint_description_vt">Descripción</string>
+    <string name="shr_hint_price_vt">Precio</string>
+    <string name="shr_hint_quantity_vt">Cantidad</string>
+    <string name="shr_set_picker">Establecer fecha y hora</string>
+    <string name="shr_cancel">Cancelar</string>
+    <string name="shr_hint_auto_accept_vt">Auto aceptar comensales</string>
+    <string name="shr_button_generate_vt">Crear mesa virtual</string>
+    <string name="shr_hint_datetime_vt">Fecha y hora</string>
+    <string name="shr_date_vt">Hora de retiro</string>
 
 
 </resources>

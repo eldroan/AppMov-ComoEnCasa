@@ -17,4 +17,10 @@
 
     </style>
 
+    <style name="Theme.MaterialComponents.Light.Dialog.MinWidth.ComoEnCasa" parent="Theme.MaterialComponents.Light.Dialog.MinWidth" >
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>
