@@ -275,7 +275,6 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
         }else{
             Log.d("Register","El bitmap fue null");
         }
-
     }
 
     @Override

@@ -7,7 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+//import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -49,7 +50,6 @@ public class SeleccionarPlatoFragment extends Fragment {
         Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
 
         //Bitmap bitmap = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.shr_logo);
-        //B/itmap bitmap = BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.shr_logo);
 
         List<VirtualTable> vt = new ArrayList<>();
 

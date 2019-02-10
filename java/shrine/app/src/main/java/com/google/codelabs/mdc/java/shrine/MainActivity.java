@@ -36,12 +36,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost,IT
         }
         Toolbar myToolbar = (Toolbar) findViewById(R.id.app_toolbar);
         setSupportActionBar(myToolbar);
-
-
-
     }
-
-
 
     @Override
     public boolean onSupportNavigateUp() {

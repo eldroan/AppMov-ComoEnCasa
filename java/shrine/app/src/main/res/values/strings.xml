@@ -47,5 +47,10 @@
     <string name="shr_hint_datetime_vt">Fecha y hora</string>
     <string name="shr_date_vt">Hora de retiro</string>
 
+    <string name="shr_direcciones">Mis direcciones</string>
+    <string name="shr_mis_pedidos">Mis pedidos</string>
+    <string name="shr_favoritos">Favoritos</string>
+    <string name="shr_mi_cuenta">Mi cuenta</string>
+    <string name="shr_ayuda">Ayuda</string>
 
 </resources>

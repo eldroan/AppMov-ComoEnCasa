@@ -4,27 +4,27 @@
 
         <group android:checkableBehavior="single">
             <item
-                android:id="@+id/inicio"
+                android:id="@+id/item_menu_inicio"
                 android:icon="@drawable/ic_home_black_24dp"
                 android:title="Inicio"/>
             <item
-                android:id="@+id/direcciones"
+                android:id="@+id/item_menu_direcciones"
                 android:icon="@drawable/ic_location_on_black_24dp"
                 android:title="Direcciones"/>
             <item
-                android:id="@+id/mis_pedidos"
+                android:id="@+id/item_menu_mis_pedidos"
                 android:icon="@drawable/ic_local_shipping_black_24dp"
                 android:title="Mis pedidos"/>
             <item
-                android:id="@+id/favoritos"
+                android:id="@+id/item_menu_favoritos"
                 android:icon="@drawable/ic_favorite_black_24dp"
                 android:title="Favoritos"/>
             <item
-                android:id="@+id/mi_cuenta"
+                android:id="@+id/item_menu_mi_cuenta"
                 android:icon="@drawable/ic_account_circle_black_24dp"
                 android:title="Mi cuenta"/>
             <item
-                android:id="@+id/ayuda"
+                android:id="@+id/item_menu_ayuda"
                 android:icon="@drawable/ic_help_black_24dp"
                 android:title="Ayuda"/>
         </group>
@@ -34,7 +34,7 @@
             android:title="Otras opciones">
             <menu>
                 <item
-                    android:id="@+id/cambiar_rol"
+                    android:id="@+id/item_menu_cambiar_rol"
                     android:icon="@drawable/ic_sync_black_24dp"
                     android:title="cambiar rol"/>
 
