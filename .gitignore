@@ -63,3 +63,5 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+
+java/shrine/app/src/debug/res/values/map_key\.xml
