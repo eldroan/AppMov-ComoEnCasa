@@ -20,7 +20,8 @@
         android:theme="@style/Theme.Shrine">
 
         <activity android:name=".MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:resizeableActivity="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +29,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".InsideMenuActivity"
-            android:screenOrientation="portrait" ></activity>
+            android:screenOrientation="portrait"
+            android:resizeableActivity="false"></activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:grantUriPermissions="true"
