@@ -1,42 +1,76 @@
 package com.google.codelabs.mdc.java.shrine;
-
-
 import android.Manifest;
-import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-//import android.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.design.button.MaterialButton;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
+//import android.support.v4.app.Fragment;
+import android.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.RadioButton;
+import android.widget.ScrollView;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
-
-
-import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import java.util.Calendar;
 
+import static com.android.volley.VolleyLog.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCallback {
 
-    GoogleMap mymap;
-    Integer mapType;
+    public static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private static final float ZOOM_BASE = 15f;
+    private GoogleMap mymap;
+    private SeekBar radio_filter_vt_seekbar;
+    private TextView radio_filter_vt_text;
+    private TextInputEditText title_filter_vt_textl;
+    private TextInputEditText max_price_filter_vt_text;
+    private SeekBar min_score_vt_seekbar;
+    private TextView min_score_vt_text;
+    private TextInputEditText date_aprox_filter_vt_text;
+    private RadioButton cash_radio_button;
+    private RadioButton mercadopago_radio_button;
+    private MaterialButton filter_vt_button;
+    private ScrollView scrollViewFragmentFilter;
+    private DatePickerDialog.OnDateSetListener onDateSetListener;
+    private TimePickerDialog.OnTimeSetListener onTimeSetListener;
     private MapView mapView;
-    SupportMapFragment mapFragment;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private Boolean mLocationPermissionsGranted = false;
+    private float zoomValue = ZOOM_BASE;
+    Circle mapCircle;
+    private String fecha;
+    private String hora;
+
 
     public FilterVirtualTableFragment() {
         // Required empty public constructor
@@ -47,35 +81,215 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.shr_fragment_filter_virtual_table, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Bundle args = getArguments();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        radio_filter_vt_seekbar = view.findViewById(R.id.radio_filter_vt_seekbar);
+        radio_filter_vt_text = view.findViewById(R.id.radio_filter_vt_text);
+        title_filter_vt_textl = view.findViewById(R.id.title_filter_vt_text);
+        max_price_filter_vt_text = view.findViewById(R.id.max_price_filter_vt_text);
+        min_score_vt_seekbar = view.findViewById(R.id.min_score_vt_seekbar);
+        min_score_vt_text = view.findViewById(R.id.min_score_vt_text);
+        date_aprox_filter_vt_text = view.findViewById(R.id.date_aprox_filter_vt_text);
+        cash_radio_button = view.findViewById(R.id.cash_radio_button);
+        mercadopago_radio_button = view.findViewById(R.id.mercadopago_radio_button);
+        filter_vt_button = view.findViewById(R.id.filter_vt_button);
+        //scrollViewFragmentFilter = view.findViewById(R.id.scrollViewFragmentFilter);
+        mapView = view.findViewById(R.id.mapView);
 
-        mapView = (MapView) view.findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.onResume();
-        mapView.getMapAsync(this);//when you already implement OnMapReadyCallback
+        date_aprox_filter_vt_text.setFocusable(false);
+        SetDataTimePickerDialogListener();
+
+        radio_filter_vt_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                               @Override
+                                                               public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                                   zoomValue = ZOOM_BASE-(0.3f*progress);
+                                                                   getDeviceLocation();
+                                                               }
+
+                                                               @Override
+                                                               public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                                               }
+
+                                                               @Override
+                                                               public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                                               }
+                                                           }
+        );
+
+        min_score_vt_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                            @Override
+                                                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                                Integer newScore = progress;
+                                                                min_score_vt_text.setText(newScore.toString());
+                                                            }
+
+                                                            @Override
+                                                            public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                                            }
+
+                                                            @Override
+                                                            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                                            }
+                                                        }
+        );
+
+        date_aprox_filter_vt_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar rightNow = Calendar.getInstance();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        getActivity(),
+                        R.style.Theme_MaterialComponents_Light_Dialog_MinWidth_ComoEnCasa,
+                        onDateSetListener,
+                        rightNow.get(Calendar.YEAR),rightNow.get(Calendar.MONTH),rightNow.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.LTGRAY));
+                datePickerDialog.show();
+            }
+        });
+
+        filter_vt_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        getLocationPermission(savedInstanceState);
+        initGoogleMap(savedInstanceState);
+
 
         return view;
     }
 
-    private void uptdateMap() {
+    private void SetDataTimePickerDialogListener() {
+        //Esto abre el dialogo del calendario
+        onDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                Calendar rightNow = Calendar.getInstance();
+                month = month + 1;
+                fecha = month + "/" + dayOfMonth + "/" + year;
+                TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(),
+                        R.style.Theme_MaterialComponents_Light_Dialog_MinWidth_ComoEnCasa,
+                        //android.R.style.Theme_Material_Dialog,
+                        onTimeSetListener,
+                        rightNow.get(Calendar.HOUR_OF_DAY),rightNow.get(Calendar.MINUTE),true);
+                timePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.LTGRAY));
+                timePickerDialog.show();
+            }
+        };
 
-        // Here, thisActivity is the current activity
-        Activity thisActivity = getActivity();
-        if (ActivityCompat.checkSelfPermission(thisActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 9999);
-            return;
+        //Esto abre el dialogo de la hora y setea el textfield
+        onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                hora = hourOfDay + ":" + minute;
+                if(fecha != null && hora!= null)
+                {
+                    date_aprox_filter_vt_text.setText(fecha +" a las "+hora);
+                }
+                else
+                {
+                    date_aprox_filter_vt_text.setText("");
+                }
+            }
+        };
+    }
+
+    private void UpdateMapRadius(LatLng currentLocation){
+        float newRadius;
+        newRadius = (450f+(radio_filter_vt_seekbar.getProgress()*150f));
+        if(mapCircle!=null)
+        {
+            mapCircle.remove();
+        }
+        CircleOptions co = new CircleOptions();
+        co.radius(newRadius);
+        radio_filter_vt_text.setText(((int) newRadius)+" mts.");
+        co.center(currentLocation);
+        co.fillColor(Color.argb(80 ,170,166,157));
+        co.strokeColor(Color.argb(255,255,177,66));
+        co.strokeWidth(5);
+        mapCircle  = mymap.addCircle(co);
+
+    }
+
+    private void initGoogleMap(Bundle savedInstanceState){
+        // *** IMPORTANT ***
+        // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
+        // objects or sub-Bundles.
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null) {
+            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
+        }
+        mapView.onCreate(mapViewBundle);
+        mapView.getMapAsync(this);
+    }
+
+    private void getLocationPermission(Bundle savedInstanceState){
+        Log.d(TAG, "getLocationPermission: getting location permissions");
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                mLocationPermissionsGranted = true;
+            }else{
+                ActivityCompat.requestPermissions(getActivity(),
+                        permissions,
+                        LOCATION_PERMISSION_REQUEST_CODE);
+            }
         }else{
-            mymap.setMyLocationEnabled(true);
+            ActivityCompat.requestPermissions(getActivity(),
+                    permissions,
+                    LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
 
-    @Override
-    public void onResume() {
-        mapView.onResume();
-        super.onResume();
+    private void getDeviceLocation(){
+        Log.d(TAG, "getDeviceLocation: getting the devices current location");
+
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+        try{
+            if(mLocationPermissionsGranted){
+
+                final Task location = mFusedLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if(task.isSuccessful()){
+                            Log.d(TAG, "onComplete: found location!");
+                            Location currentLocation = (Location) task.getResult();
+
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                                    zoomValue);
+
+                            UpdateMapRadius(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+
+                        }else{
+                            Log.d(TAG, "onComplete: current location is null");
+                            Toast.makeText(getActivity(), "unable to get current location", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }catch (SecurityException e){
+            Log.e(TAG, "getDeviceLocation: SecurityException: " + e.getMessage() );
+        }
     }
+
+    private void moveCamera(LatLng latLng, float zoom){
+        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
+        mymap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -89,13 +303,13 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
                     // contacts-related task you need to do.
 
                     Toast.makeText(getActivity(), "Permission graanted", Toast.LENGTH_SHORT).show();
-                    uptdateMap();
+                    updateMap();
                 } else {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(getActivity(), "Permission denied", Toast.LENGTH_SHORT).show();
-                    uptdateMap();
+                    updateMap();
                 }
                 return;
             }
@@ -103,12 +317,78 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
+        if (mapViewBundle == null) {
+            mapViewBundle = new Bundle();
+            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
+        }
+        mapView.onSaveInstanceState(mapViewBundle);
+    }
+
+    private void updateMap()
+    {
+        if (mLocationPermissionsGranted) {
+            getDeviceLocation();
+
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            mymap.setMyLocationEnabled(true);
+            mymap.getUiSettings().setMyLocationButtonEnabled(false);
+            mymap.getUiSettings().setZoomGesturesEnabled(false);
+            mymap.getUiSettings().setZoomControlsEnabled(false);
+
+        }
+    }
+
+    @Override
     public void onMapReady(GoogleMap map) {
         mymap = map;
-        mymap.setMinZoomPreference(12);
-        LatLng ny = new LatLng(40.7143528, -74.0059731);
-        mymap.moveCamera(CameraUpdateFactory.newLatLng(ny));
+        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+        updateMap();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        mapView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        mapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
 
 }

@@ -30,11 +30,17 @@ public class MainActivity extends AppCompatActivity implements NavigationHost,IT
        setContentView(R.layout.shr_main_activity);
 
         if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction().replace(R.id.container, new FilterVirtualTableFragment())
+                    .setTransition(android.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(null)
+                    .commit();
+        }
+        /*if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.container, new FilterVirtualTableFragment())
                     .commit();
-        }
+        }*/
         Toolbar myToolbar = (Toolbar) findViewById(R.id.app_toolbar);
         setSupportActionBar(myToolbar);
     }
