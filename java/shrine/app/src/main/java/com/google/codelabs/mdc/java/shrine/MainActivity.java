@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 //import android.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements NavigationHost,ITakePicture {
-    IReceivePicture pictureReceiver;
+    static IReceivePicture pictureReceiver;
     String pathPhoto;
 
     @Override
@@ -29,21 +30,25 @@ public class MainActivity extends AppCompatActivity implements NavigationHost,IT
         super.onCreate(savedInstanceState);
        setContentView(R.layout.shr_main_activity);
 
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().replace(R.id.container, new FilterVirtualTableFragment())
-                    .setTransition(android.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(null)
-                    .commit();
-        }
+//        if (savedInstanceState == null) {
+//            getFragmentManager().beginTransaction().replace(R.id.container, new FilterVirtualTableFragment())
+//                    .setTransition(android.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+//                    .addToBackStack(null)
+//                    .commit();
+//        }
         /*if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.container, new FilterVirtualTableFragment())
                     .commit();
         }*/
+        navigateTo(new LoginFragment(),false);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.app_toolbar);
         setSupportActionBar(myToolbar);
+
+
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -67,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationHost,IT
             transaction.addToBackStack(null);
         }
 
+
         transaction.commit();
     }
 
@@ -83,7 +89,8 @@ public class MainActivity extends AppCompatActivity implements NavigationHost,IT
     }
     @Override
     public void takePicture(IReceivePicture receiver) {
-        pictureReceiver = receiver;
+        if(receiver != null)
+            pictureReceiver = receiver;
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
@@ -104,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements NavigationHost,IT
 
         if (reqCode == 1337 && resCode == RESULT_OK) {
 
+            if(pictureReceiver == null)
+                pictureReceiver = (IReceivePicture)getSupportFragmentManager().findFragmentById(R.id.container);
             pictureReceiver.receivePicture(pathPhoto);
         }
     }

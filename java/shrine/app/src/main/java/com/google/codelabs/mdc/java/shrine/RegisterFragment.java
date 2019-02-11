@@ -52,6 +52,7 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.shr_fragment_register, container, false);
 
+
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         roundImage = view.findViewById(R.id.profile_image);
@@ -142,29 +143,29 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
         return view;
     }
 
-    //Implemente onSaveInstanceState para guardar photoBitmap pero no se si es necesario porque es Parcelable, esto hay que preguntarle a martin en la defensa.
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if(photoBitmap != null){
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            photoBitmap.compress(Bitmap.CompressFormat.PNG,100,stream);
-            outState.putByteArray("photoBitmapByteArray",stream.toByteArray());
-        }
-
-    }
-
-    //Implemente onActivityCreated para recuperar el photoBitmap pero no se si es necesario porque es Parcelable, esto hay que preguntarle a martin en la defensa.
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState != null && savedInstanceState.containsKey("photoBitmapByteArray")){
-            byte[] photoBitmapByteArray = savedInstanceState.getByteArray("photoBitmapByteArray");
-            Bitmap bmp = BitmapFactory.decodeByteArray(photoBitmapByteArray, 0, photoBitmapByteArray.length);
-            photoBitmap = bmp.copy(Bitmap.Config.ARGB_8888, true);
-        }
-
-    }
+//    //Implemente onSaveInstanceState para guardar photoBitmap pero no se si es necesario porque es Parcelable, esto hay que preguntarle a martin en la defensa.
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        if(photoBitmap != null){
+//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//            photoBitmap.compress(Bitmap.CompressFormat.PNG,100,stream);
+//            outState.putByteArray("photoBitmapByteArray",stream.toByteArray());
+//        }
+//
+//    }
+//
+//    //Implemente onActivityCreated para recuperar el photoBitmap pero no se si es necesario porque es Parcelable, esto hay que preguntarle a martin en la defensa.
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        super.onActivityCreated(savedInstanceState);
+//        if(savedInstanceState != null && savedInstanceState.containsKey("photoBitmapByteArray")){
+//            byte[] photoBitmapByteArray = savedInstanceState.getByteArray("photoBitmapByteArray");
+//            Bitmap bmp = BitmapFactory.decodeByteArray(photoBitmapByteArray, 0, photoBitmapByteArray.length);
+//            photoBitmap = bmp.copy(Bitmap.Config.ARGB_8888, true);
+//        }
+//
+//    }
 
     private boolean validateUserFields(User modelUser){
         return modelUser.surname.isEmpty() == false && modelUser.name.isEmpty() == false && modelUser.email.isEmpty() == false;
