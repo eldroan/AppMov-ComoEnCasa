@@ -1,10 +1,15 @@
 package com.google.codelabs.mdc.java.shrine;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 //import android.support.v4.app.Fragment;
 import android.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,16 +18,25 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.codelabs.mdc.java.shrine.Model.IReceivePicture;
+import com.google.codelabs.mdc.java.shrine.Model.ITakePicture;
 import com.google.codelabs.mdc.java.shrine.Model.User;
 import com.google.codelabs.mdc.java.shrine.Parse.UserDAO;
 import com.parse.ParseException;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUserModelReceiver{
+public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUserModelReceiver,ITakePicture {
     private NavigationView navview;
     private DrawerLayout mDrawerLayout;
     private User usuario;
+    static IReceivePicture pictureReceiver;
+    String pathPhoto;
 
     private boolean userReceived = false;
 
@@ -125,4 +139,46 @@ public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUs
         onBackPressed();
         return true;
     }
+
+    //BEGIN codigo para sacar fotos (Extraido del laboratorio 6)
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName,".jpg",dir);
+
+        pathPhoto = image.getAbsolutePath();
+        return image;
+    }
+    @Override
+    public void takePicture(IReceivePicture receiver) {
+        if(receiver != null)
+            pictureReceiver = receiver;
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) { }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, 1337);
+            }
+        }
+    }
+    @Override
+    protected void onActivityResult(int reqCode,int resCode, Intent data) {
+
+        if (reqCode == 1337 && resCode == RESULT_OK) {
+
+            if(pictureReceiver == null)
+                pictureReceiver = (IReceivePicture)getSupportFragmentManager().findFragmentById(R.id.container);
+            pictureReceiver.receivePicture(pathPhoto);
+        }
+    }
+    //END codigo para sacar fotos (Extraido del laboratorio 6)
 }
