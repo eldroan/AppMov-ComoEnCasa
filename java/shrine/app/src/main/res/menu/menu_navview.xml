@@ -34,11 +34,9 @@
             android:title="Otras opciones">
             <menu>
                 <item
-                    android:id="@+id/item_menu_cambiar_rol"
-                    android:icon="@drawable/ic_sync_black_24dp"
-                    android:title="cambiar rol"/>
-
-
+                    android:id="@+id/item_menu_generate_vt"
+                    android:icon="@drawable/ic_room_service_black_24dp"
+                    android:title="Crear mesa virtual"/>
             </menu>
         </item>
     </menu>

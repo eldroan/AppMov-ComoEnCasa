@@ -1,6 +1,7 @@
 package com.google.codelabs.mdc.java.shrine;
 
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -39,14 +40,14 @@ public class SeleccionarPlatoFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.shr_fragment_seleccionar_plato, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.shr_app_name));
+
+
 
         filter_button = (Button) view.findViewById(R.id.filter_button);
         listViewVirtualTables = (ListView) view.findViewById(R.id.listViewVirtualTables);
-
         Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-
-        //Bitmap bitmap = BitmapFactory.decodeResource(myContext.getResources(), R.drawable.shr_logo);
 
         List<VirtualTable> vt = new ArrayList<>();
 
@@ -72,7 +73,20 @@ public class SeleccionarPlatoFragment extends Fragment {
         virtualTableAdapter = new VirtualTableAdapter(this.getActivity(), vt);
         listViewVirtualTables.setAdapter(virtualTableAdapter);
 
+        filter_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.content_frame, new FilterVirtualTableFragment())
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
         return view;
     }
+
+
 
 }

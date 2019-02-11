@@ -11,7 +11,9 @@ import android.os.Bundle;
 
 import android.provider.MediaStore;
 import android.support.design.button.MaterialButton;
-import android.support.v4.app.Fragment;
+//import android.support.v4.app.Fragment;
+import android.app.Fragment;
+
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -66,6 +68,7 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.shr_fragment_generar_mesa, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.shr_button_generate_vt));
 
         generate_virtual_table_image = (CircleImageView) view.findViewById(R.id.generate_virtual_table_image);
         take_picture_button = (MaterialButton) view.findViewById(R.id.take_picture_button);

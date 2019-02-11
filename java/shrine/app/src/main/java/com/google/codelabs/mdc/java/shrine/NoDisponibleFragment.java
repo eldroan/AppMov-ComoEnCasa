@@ -20,6 +20,7 @@ public class NoDisponibleFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.shr_fragment_no_disponible, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Cocinando...");
 
         return view;
     }

@@ -192,8 +192,7 @@
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.Button"
             android:layout_marginTop="15dp"
-            app:icon="@drawable/shr_filter"
-            android:text="@string/shr_filter"/>
+            android:text="@string/shr_apply_filter"/>
 
     </LinearLayout>
 

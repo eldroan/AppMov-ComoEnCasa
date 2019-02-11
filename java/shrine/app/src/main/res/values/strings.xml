@@ -12,6 +12,7 @@
     <string name="shr_filter_title">Filter</string>
     <string name="shr_search_title">Search</string>
     <string name="shr_filter">Filtrar</string>
+    <string name="shr_apply_filter">Aplicar filtro</string>
     <string name="shr_product_title">Title</string>
     <string name="shr_product_description">Secondary text</string>
 
