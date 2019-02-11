@@ -45,6 +45,7 @@ public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUs
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
         UserDAO.getMyUserModel(this);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
 
         navview.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
@@ -78,16 +79,16 @@ public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUs
                         myToolbar.setTitle(getString(R.string.shr_ayuda));
                         fragment = new NoDisponibleFragment();
                         break;
-                    case R.id.item_menu_cambiar_rol:
-                        myToolbar.setTitle(getString(R.string.shr_app_name));
-                        fragment = new NoDisponibleFragment();
+                    case R.id.item_menu_generate_vt:
+                        myToolbar.setTitle(getString(R.string.shr_button_generate_vt));
+                        fragment = new GenerarMesaFragment();
                         break;
                 }
 
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.content_frame, fragment)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-//                        .addToBackStack(null)
+                        .addToBackStack(null)
                         .commit();
 
                 //Esto es para que la navView se cierre luego de seleccionar un item
@@ -117,5 +118,11 @@ public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUs
                 toast.show();
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }
