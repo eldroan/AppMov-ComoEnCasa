@@ -131,7 +131,7 @@ public  class UserDAO {
             callbackReceiver.receiveUserFailed(null);
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("ProfileImage");
-        query.whereFullText("username",user.getEmail()).getFirstInBackground(new GetCallback<ParseObject>() {
+        query.whereEqualTo("username",user.getEmail()).getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
 

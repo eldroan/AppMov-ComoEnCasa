@@ -10,14 +10,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.codelabs.mdc.java.shrine.Model.User;
+import com.google.codelabs.mdc.java.shrine.Parse.UserDAO;
+import com.parse.ParseException;
 
-public class InsideMenuActivity extends AppCompatActivity {
+import de.hdodenhof.circleimageview.CircleImageView;
 
+public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUserModelReceiver{
     private NavigationView navview;
     private DrawerLayout mDrawerLayout;
     private User usuario;
+
+    private boolean userReceived = false;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -36,6 +43,8 @@ public class InsideMenuActivity extends AppCompatActivity {
 
         navview = findViewById(R.id.nav_view);
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        UserDAO.getMyUserModel(this);
 
 
         navview.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
@@ -86,6 +95,26 @@ public class InsideMenuActivity extends AppCompatActivity {
 
                 return InsideMenuActivity.super.onOptionsItemSelected(menuItem);
                 //return  true;
+            }
+        });
+    }
+
+    @Override
+    public void receiveUserSuccesfully(User user) {
+        usuario = user;
+        CircleImageView roundImage = findViewById(R.id.sidebar_profile_image);
+        roundImage.setImageBitmap(user.image);
+        ((TextView)findViewById(R.id.sidebar_username)).setText(user.name + " " + user.surname);
+    }
+
+    @Override
+    public void receiveUserFailed(ParseException e) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final Toast toast = Toast.makeText(getApplicationContext(), "Recuperacion de imagen ha fallado", Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
     }
