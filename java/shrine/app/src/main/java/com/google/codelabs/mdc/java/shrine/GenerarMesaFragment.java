@@ -14,6 +14,7 @@ import android.support.design.button.MaterialButton;
 //import android.support.v4.app.Fragment;
 import android.app.Fragment;
 
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -42,7 +43,7 @@ import java.util.Calendar;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class GenerarMesaFragment extends Fragment implements IReceivePicture {
+public class GenerarMesaFragment extends Fragment implements IReceivePicture, View.OnClickListener {
 
     private CircleImageView generate_virtual_table_image;
     private MaterialButton take_picture_button;
@@ -73,15 +74,15 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture {
         generate_virtual_table_image = (CircleImageView) view.findViewById(R.id.generate_virtual_table_image);
         take_picture_button = (MaterialButton) view.findViewById(R.id.take_picture_button);
         select_picture_button = (MaterialButton) view.findViewById(R.id.select_picture_button);
-        title_vt_field_text = (TextView) view.findViewById(R.id.title_vt_field_text);
-        description_vt_field_text  = (TextView) view.findViewById(R.id.description_vt_field_text);
-        price_vt_field_text = (TextView) view.findViewById(R.id.price_vt_field_text);
-        quantity_vt_field_text = (TextView) view.findViewById(R.id.quantity_vt_field_text);
+        title_vt_field_text = (TextInputEditText) view.findViewById(R.id.title_vt_field_text);
+        description_vt_field_text  = (TextInputEditText) view.findViewById(R.id.description_vt_field_text);
+        price_vt_field_text = (TextInputEditText) view.findViewById(R.id.price_vt_field_text);
+        quantity_vt_field_text = (TextInputEditText) view.findViewById(R.id.quantity_vt_field_text);
         pay_method_vt_spinner = (Spinner) view.findViewById(R.id.pay_method_vt_spinner);
         auto_accept_switch = (SwitchCompat) view.findViewById(R.id.auto_accept_switch);
         generate_vt_button  = (MaterialButton) view.findViewById(R.id.generate_vt_button);
         cancel_vt_button = (MaterialButton) view.findViewById(R.id.cancel_vt_button);
-        datetime_vt_field_text = (TextView) view.findViewById(R.id.datetime_vt_field_text);
+        datetime_vt_field_text = (TextInputEditText) view.findViewById(R.id.datetime_vt_field_text);
         datetime_vt_field_text.setFocusable(false);
 
 
@@ -143,19 +144,10 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture {
         };
 
 
-        take_picture_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ITakePicture) getActivity()).takePicture(GenerarMesaFragment.this);
-            }
-        });
-
-        select_picture_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ITakePicture) getActivity()).takePicture(GenerarMesaFragment.this);
-            }
-        });
+        take_picture_button.setOnClickListener(this);
+        generate_vt_button.setOnClickListener(this);
+        cancel_vt_button.setOnClickListener(this);
+        select_picture_button.setOnClickListener(this);
 
         return view;
     }
@@ -177,6 +169,23 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture {
             photoBitmap = imageBitmap;
         }else{
             Log.d("Generate V T","El bitmap fue null");
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.take_picture_button:
+                ((ITakePicture)this.getActivity()).takePicture(this);
+                break;
+            case R.id.select_picture_button:
+                break;
+            case R.id.cancel_vt_button:
+                break;
+            case R.id.generate_vt_button:
+                break;
+            default:
+                break;
         }
     }
 }
