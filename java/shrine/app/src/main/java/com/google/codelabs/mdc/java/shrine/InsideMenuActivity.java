@@ -11,13 +11,16 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.google.codelabs.mdc.java.shrine.Model.User;
+
 public class InsideMenuActivity extends AppCompatActivity {
 
     private NavigationView navview;
     private DrawerLayout mDrawerLayout;
+    private User usuario;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shr_inside_menu_activity);
 
@@ -26,7 +29,6 @@ public class InsideMenuActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.content_frame, fr)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(null)
                 .commit();
 
         final Toolbar myToolbar = (Toolbar) findViewById(R.id.appbar);
@@ -76,7 +78,7 @@ public class InsideMenuActivity extends AppCompatActivity {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.content_frame, fragment)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .addToBackStack(null)
+//                        .addToBackStack(null)
                         .commit();
 
                 //Esto es para que la navView se cierre luego de seleccionar un item

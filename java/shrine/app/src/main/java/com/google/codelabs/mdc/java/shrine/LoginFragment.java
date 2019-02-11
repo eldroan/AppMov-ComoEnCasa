@@ -132,8 +132,10 @@ public class LoginFragment extends Fragment implements UserDAO.IUserLogin {
     public void loginSuccesful() {
         nextButton.setClickable(true);
         Intent intent = new Intent(getActivity(), InsideMenuActivity.class);
+
         //intent.putExtra("userModel",user);
         startActivity(intent);
+        getActivity().finishAffinity();
     }
 
     @Override
