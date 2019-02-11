@@ -18,8 +18,7 @@ import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Console;
-import java.util.logging.Logger;
+
 
 public  class UserDAO {
 
@@ -31,8 +30,13 @@ public  class UserDAO {
     }
 
     public interface IUserLogin{
-        void loginSuccesful(User user);
+        void loginSuccesful();
         void loginFailed(ParseException e);
+    }
+
+    public interface IUserModelReceiver{
+        void receiveUserSuccesfully(User user);
+        void receiveUserFailed(ParseException e);
     }
 
     public static void createUser(final User localUser, final String password, final IUserCreation callbackReceiver) {
@@ -66,6 +70,7 @@ public  class UserDAO {
                                 profileImage.put("username",localUser.email);
                                 profileImage.put("imagepath",parseImage);
 
+
                                 profileImage.saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
@@ -80,6 +85,7 @@ public  class UserDAO {
 
                             }else{
                                 //La imagen se subio mal
+                                //TODO Aca deberia borrar el usuario
                                 callbackReceiver.creationFailed(e);
                             }
                         }
@@ -104,46 +110,56 @@ public  class UserDAO {
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             public void done(final ParseUser user, ParseException e) {
                 if (e == null && user != null) {
-                    // Logueo con exito, hay que construir el usuario del modelo
-                    //Primero recuperamos la imagen del usuario;
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("ProfileImage");
-                    query.whereFullText("username",user.getEmail()).getFirstInBackground(new GetCallback<ParseObject>() {
+                    // Logueo con exito,
+                    callbackReceiver.loginSuccesful();
+                } else {
+                    // fallo el login
+                    callbackReceiver.loginFailed(e);
+                }
+            }
+        });
+    }
+
+    public static void getMyUserModel(final IUserModelReceiver callbackReceiver)
+    {
+        final ParseUser user = ParseUser.getCurrentUser();
+        getUserModel(callbackReceiver,user);
+    }
+
+    public static  void getUserModel(final IUserModelReceiver callbackReceiver, final ParseUser user){
+        if(user == null)
+            callbackReceiver.receiveUserFailed(null);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("ProfileImage");
+        query.whereFullText("username",user.getEmail()).getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+
+                if(e == null){
+                    ParseFile pf = object.getParseFile("imagepath");
+                    pf.getDataInBackground(new GetDataCallback() {
                         @Override
-                        public void done(ParseObject object, ParseException e) {
-
+                        public void done(byte[] data, ParseException e) {
                             if(e == null){
-                                ParseFile pf = object.getParseFile("imagepath");
-                                pf.getDataInBackground(new GetDataCallback() {
-                                    @Override
-                                    public void done(byte[] data, ParseException e) {
-                                        if(e == null){
-                                            Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                            Bitmap mutableBitmap = bmp.copy(Bitmap.Config.ARGB_8888, true);
-                                            User modelUser = new User();
-                                            modelUser.email = user.getEmail();
-                                            modelUser.name = user.getString("name");
-                                            modelUser.surname = user.getString("surname");
-                                            modelUser.score = user.getDouble("score");
-                                            modelUser.image = mutableBitmap;
+                                Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                Bitmap mutableBitmap = bmp.copy(Bitmap.Config.ARGB_8888, true);
+                                User modelUser = new User();
+                                modelUser.email = user.getEmail();
+                                modelUser.name = user.getString("name");
+                                modelUser.surname = user.getString("surname");
+                                modelUser.score = user.getDouble("score");
+                                modelUser.image = mutableBitmap;
 
-                                            callbackReceiver.loginSuccesful(modelUser);
-                                        }else{
-                                            callbackReceiver.loginFailed(e);
-                                        }
+                                callbackReceiver.receiveUserSuccesfully(modelUser);
 
-                                    }
-                                });
                             }else{
-                                callbackReceiver.loginFailed(e);
-
+                                callbackReceiver.receiveUserFailed(e);
                             }
 
                         }
                     });
-//
-                } else {
-                    // fallo el login
-                    callbackReceiver.loginFailed(e);
+                }else {
+                    callbackReceiver.receiveUserFailed(e);
                 }
             }
         });

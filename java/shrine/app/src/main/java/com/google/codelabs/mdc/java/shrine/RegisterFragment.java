@@ -213,6 +213,7 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
                 toast.show();
             }
         });
+
     }
 
     @Override
@@ -225,7 +226,11 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
                 toast.show();
             }
         });
-
+        try {
+            getFragmentManager().popBackStackImmediate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
