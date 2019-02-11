@@ -17,7 +17,7 @@ public class VirtualTable {
     public int paymentMethod;
     public Date deadlineForEntering;
     public Date deliveryTime;
-    public String[] tags;
+    public List<String> tags;
     public double latitude;
     public double longitude;
     public User chef;

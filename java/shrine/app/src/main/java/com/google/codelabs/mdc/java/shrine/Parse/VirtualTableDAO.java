@@ -60,17 +60,17 @@ public class VirtualTableDAO {
                         //virtualTable.put("deliveryTime",(new Long(virtualTableModel.deliveryTime.getTime())).doubleValue());
                         virtualTable.put("deadlineForEntering",(virtualTableModel.deadlineForEntering));
                         virtualTable.put("deliveryTime",(virtualTableModel.deliveryTime));
-                        StringBuilder stbr = new StringBuilder();
+//                        StringBuilder stbr = new StringBuilder();
 
                         //Guardo todos lo tags como separados por coma para no tener que buscar la data en otra query
-                        for(int i = 0; i<virtualTableModel.tags.length;i++){
-                            if(i!=0){
-                                //A todos menos el primer elemento le meto la , adelante
-                                stbr.append(",");
-                            }
-                            stbr.append(virtualTableModel.tags[i]);
-                        }
-                        virtualTable.put("tags",stbr.toString());
+//                        for(int i = 0; i<virtualTableModel.tags.length;i++){
+//                            if(i!=0){
+//                                //A todos menos el primer elemento le meto la , adelante
+//                                stbr.append(",");
+//                            }
+//                            stbr.append(virtualTableModel.tags[i]);
+//                        }
+                        virtualTable.put("tags",virtualTableModel.tags);
                         ParseGeoPoint geoPoint = new ParseGeoPoint(virtualTableModel.latitude,virtualTableModel.longitude);
                         virtualTable.put("latlon",geoPoint);
                         virtualTable.put("chef",virtualTableModel.chef.email);
@@ -97,7 +97,7 @@ public class VirtualTableDAO {
             query.getInBackground(virtualTableModel.objectId, new GetCallback<ParseObject>() {
                 @Override
                 public void done(final ParseObject virtualTable, ParseException e) {
-                    if(e == null){
+                    if(e == null && virtualTable != null){
                         //Vuelvo a subir la imagen por si cambio
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         virtualTableModel.image.compress(Bitmap.CompressFormat.PNG,100,stream);
@@ -119,17 +119,17 @@ public class VirtualTableDAO {
                                     //virtualTable.put("deliveryTime",(new Long(virtualTableModel.deliveryTime.getTime())).doubleValue());
                                     virtualTable.put("deadlineForEntering",(virtualTableModel.deadlineForEntering));
                                     virtualTable.put("deliveryTime",(virtualTableModel.deliveryTime));
-                                    StringBuilder stbr = new StringBuilder();
+//                                    StringBuilder stbr = new StringBuilder();
 
                                     //Guardo todos lo tags como separados por coma para no tener que buscar la data en otra query
-                                    for(int i = 0; i<virtualTableModel.tags.length;i++){
-                                        if(i!=0){
-                                            //A todos menos el primer elemento le meto la , adelante
-                                            stbr.append(",");
-                                        }
-                                        stbr.append(virtualTableModel.tags[i]);
-                                    }
-                                    virtualTable.put("tags",stbr.toString());
+//                                    for(int i = 0; i<virtualTableModel.tags.length;i++){
+//                                        if(i!=0){
+//                                            //A todos menos el primer elemento le meto la , adelante
+//                                            stbr.append(",");
+//                                        }
+//                                        stbr.append(virtualTableModel.tags[i]);
+//                                    }
+                                    virtualTable.put("tags",virtualTableModel.tags);
                                     ParseGeoPoint geoPoint = new ParseGeoPoint(virtualTableModel.latitude,virtualTableModel.longitude);
                                     virtualTable.put("latlon",geoPoint);
                                     virtualTable.put("chef",virtualTableModel.chef.email);
@@ -194,7 +194,7 @@ public class VirtualTableDAO {
     }
 
     private static void treatVirtualTableQueryResult(List<ParseObject> objects, IVirtualTableRetrievingResult callbackReceiver) {
-        ArrayList<String> usersEmails = new ArrayList<String>();
+//        ArrayList<String> usersEmails = new ArrayList<String>();
         ListIterator<ParseObject> objectsli = objects.listIterator();
         ArrayList<VirtualTable>  virtualTables = new ArrayList<VirtualTable>();
 
@@ -247,7 +247,7 @@ public class VirtualTableDAO {
             vt.paymentMethod= virtualObject.getInt("paymentMethod");
             vt.deadlineForEntering= virtualObject.getDate("deadlineForEntering");
             vt.deliveryTime= virtualObject.getDate("deliveryTime");
-            vt.tags= virtualObject.getString("tags").split(",");
+            vt.tags= virtualObject.getList("tags");
             ParseGeoPoint parseGeoPoint = virtualObject.getParseGeoPoint("latlon");
             vt.latitude= parseGeoPoint.getLatitude();
             vt.longitude= parseGeoPoint.getLongitude();
