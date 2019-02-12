@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -50,6 +51,7 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
     private TextInputEditText nameEditText;
     private TextInputEditText surnameEditText;
     private TextInputEditText emailEditText;
+    private boolean compressingImage = false;
 
     MaterialButton createUserButton;
     public View onCreateView(
@@ -148,32 +150,25 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
         return view;
     }
 
-//    //Implemente onSaveInstanceState para guardar photoBitmap pero no se si es necesario porque es Parcelable, esto hay que preguntarle a martin en la defensa.
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        if(photoBitmap != null){
-//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//            photoBitmap.compress(Bitmap.CompressFormat.PNG,100,stream);
-//            outState.putByteArray("photoBitmapByteArray",stream.toByteArray());
-//        }
-//
-//    }
-//
-//    //Implemente onActivityCreated para recuperar el photoBitmap pero no se si es necesario porque es Parcelable, esto hay que preguntarle a martin en la defensa.
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        if(savedInstanceState != null && savedInstanceState.containsKey("photoBitmapByteArray")){
-//            byte[] photoBitmapByteArray = savedInstanceState.getByteArray("photoBitmapByteArray");
-//            Bitmap bmp = BitmapFactory.decodeByteArray(photoBitmapByteArray, 0, photoBitmapByteArray.length);
-//            photoBitmap = bmp.copy(Bitmap.Config.ARGB_8888, true);
-//        }
-//
-//    }
 
     private boolean validateUserFields(User modelUser){
+
         return modelUser.surname.isEmpty() == false && modelUser.name.isEmpty() == false && modelUser.email.isEmpty() == false;
+    }
+
+    private boolean isCompressingImage(){
+        if(compressingImage){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast t = Toast.makeText(getActivity().getApplicationContext(),"Espere por favor mientras se comprime la imagen",Toast.LENGTH_SHORT);
+                    t.show();
+                }
+            });
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private boolean isPasswordValid(@Nullable Editable text) {
@@ -283,6 +278,8 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
             //Hacer algo con este bitmap
             roundImage.setImageBitmap(imageBitmap);
             photoBitmap = imageBitmap;
+            comprimirImagen(photoBitmap,true);
+
         }else{
             Log.d("Register","El bitmap fue null");
         }
@@ -299,7 +296,7 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
                     pickImage();
                 break;
             case R.id.register_user_button:
-                if(isPasswordValid(passwordEditText.getText()) && photoBitmap != null){
+                if(isCompressingImage() == false && isPasswordValid(passwordEditText.getText()) && photoBitmap != null){
                     String password = passwordEditText.getText().toString();
                     if(password.equals(passwordEditTextConfirmation.getText().toString())){
                         User newUser = new User();
@@ -333,15 +330,47 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
         if (resultCode == RESULT_OK && requestCode == 10) {
 
             Uri returnUri = data.getData();
-            Bitmap bitmapImage = null;
             try {
-                bitmapImage = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), returnUri);
+                photoBitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), returnUri);
+                roundImage.setImageBitmap(photoBitmap);
+                comprimirImagen(photoBitmap,false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            roundImage.setImageBitmap(bitmapImage);
+
 
         }
+    }
+
+    private void comprimirImagen(final Bitmap imagen, final boolean rotate){
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                compressingImage =true;
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+                Bitmap as = Bitmap.createScaledBitmap(imagen, 400, 300, false);
+                as.compress(Bitmap.CompressFormat.PNG, 30, out);
+                byte[] byteArray = out.toByteArray();
+                Bitmap decoded = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+                Matrix matrix = new Matrix();
+
+                if(rotate)
+                    matrix.postRotate(90);
+
+                Bitmap rotatedBitmap = Bitmap.createBitmap(decoded, 0, 0, decoded.getWidth(), decoded.getHeight(), matrix, true);
+                photoBitmap = rotatedBitmap;
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        roundImage.setImageBitmap(photoBitmap);
+                    }
+                });
+                compressingImage =false;
+            }
+        });
+        t.start();
     }
 
 }

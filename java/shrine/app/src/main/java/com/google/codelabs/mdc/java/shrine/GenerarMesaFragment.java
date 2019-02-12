@@ -3,6 +3,7 @@ package com.google.codelabs.mdc.java.shrine;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -54,6 +55,7 @@ import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.app.Activity.RESULT_OK;
 import static com.android.volley.VolleyLog.TAG;
 
 
@@ -90,7 +92,7 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private Location currentLocation;
     private Boolean receivedLocation = false;
-    private Boolean comprimiendoImagen = false;
+    private Boolean compressingImage = false;
     public static GenerarMesaFragment currentFragment;
 
 
@@ -260,30 +262,7 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
 
         if (imageBitmap != null) {
             generate_virtual_table_image.setImageBitmap(imageBitmap);
-            final Bitmap finalImageBitmap = imageBitmap;
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    comprimiendoImagen =true;
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-                    Bitmap as = Bitmap.createScaledBitmap(finalImageBitmap, 400, 300, false);
-                    as.compress(Bitmap.CompressFormat.PNG, 30, out);
-                    byte[] byteArray = out.toByteArray();
-                    Bitmap decoded = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-
-                    Matrix matrix = new Matrix();
-
-                    matrix.postRotate(-90);
-
-                    Bitmap rotatedBitmap = Bitmap.createBitmap(decoded, 0, 0, decoded.getWidth(), decoded.getHeight(), matrix, true);
-                    photoBitmap = rotatedBitmap;
-                    GenerarMesaFragment.currentFragment.changePhotoBitmap(photoBitmap);
-                    comprimiendoImagen =false;
-                }
-            });
-
-            t.start();
+            comprimirImagen(imageBitmap,true);
 
         }else{
             Log.d("Generate V T","El bitmap fue null");
@@ -297,7 +276,7 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
                 ((ITakePicture)this.getActivity()).takePicture(this);
                 break;
             case R.id.select_picture_button:
-
+                pickImage();
                 break;
             case R.id.cancel_vt_button:
                 getActivity().onBackPressed();
@@ -390,7 +369,7 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
             return "El usuario conectado fue nulo, vuelva a conectarse por favor";
         }
 
-        if(comprimiendoImagen){
+        if(compressingImage){
             return "Por favor espere un poco mientras se comprime su imagen";
         }
 
@@ -537,12 +516,58 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
 
     }
 
-    public void changePhotoBitmap(final Bitmap newvalue){
-        getActivity().runOnUiThread(new Runnable() {
+    private void comprimirImagen(final Bitmap imagen, final boolean rotate){
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                generate_virtual_table_image.setImageBitmap(newvalue);
+                compressingImage =true;
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+                Bitmap as = Bitmap.createScaledBitmap(imagen, 400, 300, false);
+                as.compress(Bitmap.CompressFormat.PNG, 30, out);
+                byte[] byteArray = out.toByteArray();
+                Bitmap decoded = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+                Matrix matrix = new Matrix();
+
+                if(rotate)
+                    matrix.postRotate(90);
+
+                Bitmap rotatedBitmap = Bitmap.createBitmap(decoded, 0, 0, decoded.getWidth(), decoded.getHeight(), matrix, true);
+                photoBitmap = rotatedBitmap;
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        generate_virtual_table_image.setImageBitmap(photoBitmap);
+                    }
+                });
+                compressingImage =false;
             }
         });
+        t.start();
+    }
+
+    public void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent.createChooser(intent,"Seleccione la aplicación"),10);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == 10) {
+
+            Uri returnUri = data.getData();
+            try {
+                photoBitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), returnUri);
+                generate_virtual_table_image.setImageBitmap(photoBitmap);
+                comprimirImagen(photoBitmap,false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
     }
 }
