@@ -31,7 +31,7 @@
             android:layout_marginBottom="132dp"
             android:text="@string/shr_app_name"
             android:textAllCaps="true"
-            android:textSize="16sp" />
+            android:textSize="16dp" />
 
         <!-- Snippet from "Add text fields" section goes here. -->
         <android.support.design.widget.TextInputLayout

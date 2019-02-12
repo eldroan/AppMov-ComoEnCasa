@@ -21,6 +21,11 @@
 
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait"
+            android:resizeableActivity="false"
+            android:windowSoftInputMode="stateHidden"></activity>
+
+        <activity android:name=".SplashScreenActivity"
+            android:screenOrientation="portrait"
             android:resizeableActivity="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
