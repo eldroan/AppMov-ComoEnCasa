@@ -1,7 +1,9 @@
 package com.google.codelabs.mdc.java.shrine.Parse;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.widget.Toast;
 
 import com.google.codelabs.mdc.java.shrine.Model.User;
 import com.google.codelabs.mdc.java.shrine.Model.VirtualTable;
@@ -20,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Random;
 
 public class VirtualTableDAO {
 
@@ -204,6 +205,63 @@ public class VirtualTableDAO {
 
                 }else{
                     callbackReceiver.retrievingFailed(e);
+                }
+            }
+        });
+
+    }
+
+    public static void addEatingPersonToVirtualTable(String objectId, final Activity c){
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("VirtualTable");
+        query.getInBackground(objectId, new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if(e==null ){
+                    if(object != null){
+                        int eating = object.getInt("currentlyEating");
+                        int maxEating = object.getInt("maxEating");
+                        if(eating < maxEating){
+                            object.put("currentlyEating",eating + 1);
+                            try {
+                                object.save();
+                                c.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(c,"Se subscribio a la mesa",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } catch (ParseException e1) {
+                                c.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(c,"Fallo la conexion con el servidor",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+                        }else{
+                            c.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(c,"La mesa esta llena, no se puede subscribir",Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }else{
+                        c.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(c,"No se encontro la mesa",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }else{
+                    c.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(c,"Fallo el intento de subscribirse a la mesa",Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
