@@ -267,7 +267,7 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
                     comprimiendoImagen =true;
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-                    Bitmap as = Bitmap.createScaledBitmap(finalImageBitmap, 300, 400, false);
+                    Bitmap as = Bitmap.createScaledBitmap(finalImageBitmap, 400, 300, false);
                     as.compress(Bitmap.CompressFormat.PNG, 30, out);
                     byte[] byteArray = out.toByteArray();
                     Bitmap decoded = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
