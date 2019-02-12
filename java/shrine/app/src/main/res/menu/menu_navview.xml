@@ -37,6 +37,10 @@
                     android:id="@+id/item_menu_generate_vt"
                     android:icon="@drawable/ic_room_service_black_24dp"
                     android:title="Crear mesa virtual"/>
+                <item
+                    android:id="@+id/item_menu_edit_vt"
+                    android:icon="@drawable/ic_room_service_black_24dp"
+                    android:title="Editar ultima mesa"/>
             </menu>
         </item>
     </menu>

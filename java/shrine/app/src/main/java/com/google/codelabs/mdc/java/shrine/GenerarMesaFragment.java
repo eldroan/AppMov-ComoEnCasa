@@ -45,6 +45,7 @@ import com.google.codelabs.mdc.java.shrine.Model.ITakePicture;
 import com.google.codelabs.mdc.java.shrine.Model.VirtualTable;
 import com.google.codelabs.mdc.java.shrine.Parse.VirtualTableDAO;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -52,6 +53,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -59,7 +61,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.android.volley.VolleyLog.TAG;
 
 
-public class GenerarMesaFragment extends Fragment implements IReceivePicture, View.OnClickListener, VirtualTableDAO.IVirtualTablePersistanceResult {
+public class GenerarMesaFragment extends Fragment implements IReceivePicture, View.OnClickListener, VirtualTableDAO.IVirtualTablePersistanceResult, VirtualTableDAO.IVirtualTableRetrievingResult {
 
     private CircleImageView generate_virtual_table_image;
     private MaterialButton take_picture_button;
@@ -95,6 +97,10 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
     private Boolean compressingImage = false;
     public static GenerarMesaFragment currentFragment;
 
+    //Estos valores son para la funcionalidad de modificar virtual table
+    private boolean  modifyingVirtualTable= false;
+    private boolean retrievedVirtualTable = false;
+    private VirtualTable editableVT = null;
 
 
     @Override
@@ -120,6 +126,7 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
         delivery_datetime_vt_field_text.setFocusable(false);
         reservation_datetime_vt_field_text.setFocusable(false);
         currentFragment = this;
+
 
         String[] pay_method_items = new String[] { "Efectivo", "Mercadopago"
         };
@@ -244,6 +251,44 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
 
         getLocationPermission(savedInstanceState);
 
+        Bundle b = getArguments();
+
+        if(b != null){
+            modifyingVirtualTable = b.getBoolean("modify", false);
+            if(modifyingVirtualTable){
+                ParseUser user = ParseUser.getCurrentUser();
+                if(user != null){
+
+//                    reservation_datetime_vt_field_text.setFocusable(false);
+//                    delivery_datetime_vt_field_text.setFocusable(false);
+//                    cancel_vt_button.setClickable(false);
+//                    take_picture_button.setClickable(false);
+//                    select_picture_button.setClickable(false);
+//                    title_vt_field_text.setFocusable(false);
+//                    description_vt_field_text.setFocusable(false);
+//                    price_vt_field_text.setFocusable(false);
+//                    quantity_vt_field_text.setFocusable(false);
+//                    pay_method_vt_spinner.setClickable(false);
+//                    pay_method_vt_spinner.setFocusable(false);
+//                    generate_vt_button.setClickable(false);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.shr_button_modify_vt));
+                            generate_vt_button.setText(getActivity().getResources().getString(R.string.shr_button_modify_vt));
+                        }
+                    });
+//                    delivery_datetime_vt_field_text.setClickable(false);
+//                    reservation_datetime_vt_field_text.setClickable(false);
+
+                    VirtualTableDAO.retrieveMyLastVirtualTable(user.getEmail(),this);
+                }else{
+                    getActivity().onBackPressed();
+                }
+
+            }
+
+        }
 
         return view;
     }
@@ -282,35 +327,62 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
                 getActivity().onBackPressed();
                 break;
             case R.id.generate_vt_button:
-                final String validationResult = validateFields();
-                if(validationResult != null && validationResult.isEmpty()){
-                    VirtualTable tempVT = new VirtualTable();
-                    tempVT.title = title_vt_field_text.getText().toString();
-                    tempVT.description = description_vt_field_text.getText().toString();
-                    tempVT.image = photoBitmap;
-                    tempVT.price = new Double(price_vt_field_text.getText().toString());
-                    tempVT.currentlyEating = 0;
-                    tempVT.maxEating = new Integer(quantity_vt_field_text.getText().toString());
-                    tempVT.paymentMethod = ((String)pay_method_vt_spinner.getSelectedItem()).equals("Efectivo") ? 0 : 1; //Harcodeada cosmica, no anda con mas de 2
-                    tempVT.deadlineForEntering = reservation.getTime();
-                    tempVT.deliveryTime = delivery.getTime();
-                    tempVT.tags = new ArrayList<String>();
-                    tempVT.latitude = currentLocation.getLatitude();
-                    tempVT.longitude = currentLocation.getLongitude();
-                    tempVT.chef = ((InsideMenuActivity)getActivity()).usuario ;
+                if(modifyingVirtualTable){
+                    if(retrievedVirtualTable){
+                        editableVT.title = title_vt_field_text.getText().toString();
+                        editableVT.description = description_vt_field_text.getText().toString();
+                        editableVT.image = photoBitmap;
+                        editableVT.price = new Double(price_vt_field_text.getText().toString());
+                        editableVT.maxEating = new Integer(quantity_vt_field_text.getText().toString());
+                        editableVT.paymentMethod = ((String)pay_method_vt_spinner.getSelectedItem()).equals("Efectivo") ? 0 : 1; //Harcodeada cosmica, no anda con mas de 2
+                        editableVT.deadlineForEntering = reservation.getTime();
+                        editableVT.deliveryTime = delivery.getTime();
+                        editableVT.tags = new ArrayList<String>();
+                        editableVT.latitude = currentLocation.getLatitude();
+                        editableVT.longitude = currentLocation.getLongitude();
+                        generate_vt_button.setClickable(false);
+                        VirtualTableDAO.saveVirtualTable(editableVT,this);
+                    }else{
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast t = Toast.makeText(getActivity().getApplicationContext(),"Por favor espere mientras recuperamos la mesa a editar",Toast.LENGTH_SHORT);
+                                t.show();
 
-                    generate_vt_button.setClickable(false);
-                    VirtualTableDAO.saveVirtualTable(tempVT,this);
-
+                            }
+                        });
+                    }
                 }else{
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast t = Toast.makeText(getActivity().getApplicationContext(),validationResult,Toast.LENGTH_SHORT);
-                            t.show();
+                    final String validationResult = validateFields();
+                    if(validationResult != null && validationResult.isEmpty()){
+                        VirtualTable tempVT = new VirtualTable();
+                        tempVT.title = title_vt_field_text.getText().toString();
+                        tempVT.description = description_vt_field_text.getText().toString();
+                        tempVT.image = photoBitmap;
+                        tempVT.price = new Double(price_vt_field_text.getText().toString());
+                        tempVT.currentlyEating = 0;
+                        tempVT.maxEating = new Integer(quantity_vt_field_text.getText().toString());
+                        tempVT.paymentMethod = ((String)pay_method_vt_spinner.getSelectedItem()).equals("Efectivo") ? 0 : 1; //Harcodeada cosmica, no anda con mas de 2
+                        tempVT.deadlineForEntering = reservation.getTime();
+                        tempVT.deliveryTime = delivery.getTime();
+                        tempVT.tags = new ArrayList<String>();
+                        tempVT.latitude = currentLocation.getLatitude();
+                        tempVT.longitude = currentLocation.getLongitude();
+                        tempVT.chef = ((InsideMenuActivity)getActivity()).usuario ;
 
-                        }
-                    });
+                        generate_vt_button.setClickable(false);
+                        VirtualTableDAO.saveVirtualTable(tempVT,this);
+
+                    }else{
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast t = Toast.makeText(getActivity().getApplicationContext(),validationResult,Toast.LENGTH_SHORT);
+                                t.show();
+
+                            }
+                        });
+                    }
                 }
                 break;
             default:
@@ -483,7 +555,13 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast t = Toast.makeText(getActivity().getApplicationContext(),"La mesa se creo exitosamente",Toast.LENGTH_SHORT);
+                Toast t;
+                if(modifyingVirtualTable){
+                    t = Toast.makeText(getActivity().getApplicationContext(),"La mesa se modifico exitosamente",Toast.LENGTH_SHORT);
+
+                }else{
+                    t = Toast.makeText(getActivity().getApplicationContext(),"La mesa se creo exitosamente",Toast.LENGTH_SHORT);
+                }
                 t.show();
 
             }
@@ -503,7 +581,13 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast t = Toast.makeText(getActivity().getApplicationContext(),"La mesa no pudo ser creada :(",Toast.LENGTH_SHORT);
+                Toast t;
+                if(modifyingVirtualTable){
+                    t = Toast.makeText(getActivity().getApplicationContext(),"La mesa no pudo ser modificada :(",Toast.LENGTH_SHORT);
+
+                }else{
+                    t = Toast.makeText(getActivity().getApplicationContext(),"La mesa no pudo ser creada :(",Toast.LENGTH_SHORT);
+                }
                 t.show();
 
             }
@@ -569,5 +653,81 @@ public class GenerarMesaFragment extends Fragment implements IReceivePicture, Vi
 
 
         }
+    }
+
+    @Override
+    public void retrievingFailed(ParseException error) {
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                final Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Fallo la recuperacion de la mesa", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+        getActivity().onBackPressed();
+    }
+
+    @Override
+    public void retrievingSucceded(final List<VirtualTable> results) {
+        if(results.isEmpty()){
+            getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+                    final Toast toast = Toast.makeText(getActivity().getApplicationContext(), "No posee mesas para editar", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            });
+            getActivity().onBackPressed();
+        }else{
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    editableVT = results.get(0);
+                    //Aca tengo que llenar los fields
+                    delivery = Calendar.getInstance();
+                    delivery.setTime(editableVT.deliveryTime);
+                    //month + "/" + dayOfMonth + "/" + year
+                    fecha_delivery = delivery.get(Calendar.MONTH) + "/" + delivery.get(Calendar.DAY_OF_MONTH)+"/"+delivery.get(Calendar.YEAR);
+                    //hourOfDay + ":" + minute;
+                    hora_delivery = delivery.get(Calendar.HOUR_OF_DAY)+":"+delivery.get(Calendar.MINUTE);
+                    reservation = Calendar.getInstance();
+                    reservation.setTime(editableVT.deadlineForEntering);
+                    //month + "/" + dayOfMonth + "/" + year
+                    fecha_reservation = reservation.get(Calendar.MONTH) + "/" + reservation.get(Calendar.DAY_OF_MONTH)+"/"+reservation.get(Calendar.YEAR);
+                    //hourOfDay + ":" + minute;
+                    hora_reservation = reservation.get(Calendar.HOUR_OF_DAY)+":"+reservation.get(Calendar.MINUTE);
+
+                    reservation_datetime_vt_field_text.setText(fecha_reservation +" a las "+ hora_reservation);
+                    delivery_datetime_vt_field_text.setText(fecha_delivery +" a las "+ hora_delivery);
+                    title_vt_field_text.setText(editableVT.title);
+                    description_vt_field_text.setText(editableVT.description);
+                    price_vt_field_text.setText((new Double(editableVT.price).toString()));
+                    quantity_vt_field_text.setText((new Integer(editableVT.maxEating)).toString());
+                    pay_method_vt_spinner.setSelection(editableVT.paymentMethod);
+                    generate_virtual_table_image.setImageBitmap(editableVT.image);
+                    photoBitmap = editableVT.image;
+
+                    //Aca tengo que volverle a activar las cosas para editar;
+//                    reservation_datetime_vt_field_text.setFocusable(true);
+//
+//                    delivery_datetime_vt_field_text.setFocusable(true);
+//                    cancel_vt_button.setClickable(true);
+//                    take_picture_button.setClickable(true);
+//                    select_picture_button.setClickable(true);
+//                    title_vt_field_text.setFocusable(true);
+//                    title_vt_field_text.setClickable(true);
+//
+//                    description_vt_field_text.setFocusable(true);
+//                    price_vt_field_text.setFocusable(true);
+//                    quantity_vt_field_text.setFocusable(true);
+//                    pay_method_vt_spinner.setClickable(true);
+//                    pay_method_vt_spinner.setFocusable(true);
+//                    generate_vt_button.setClickable(true);
+//                    delivery_datetime_vt_field_text.setClickable(true);
+//                    reservation_datetime_vt_field_text.setClickable(true);
+
+                    retrievedVirtualTable = true;
+                }
+            });
+        }
+
     }
 }

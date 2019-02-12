@@ -156,6 +156,23 @@ public class VirtualTableDAO {
             });
         }
     }
+    public static void retrieveMyLastVirtualTable(String username, final IVirtualTableRetrievingResult callbackReceiver){
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("VirtualTable").whereGreaterThan("deadlineForEntering",new Date()).whereEqualTo("chef",username).whereEqualTo("currentlyEating",0).addDescendingOrder("createdAt");
+
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done( List<ParseObject> objects, ParseException e) {
+                if(e == null){
+                    treatVirtualTableQueryResult(objects, callbackReceiver);
+
+                }else{
+                    callbackReceiver.retrievingFailed(e);
+                }
+            }
+        });
+
+    }
 
     public static void retrieveAllOpenVirtualTables(final IVirtualTableRetrievingResult callbackReceiver){
         ParseQuery<ParseObject> query = ParseQuery.getQuery("VirtualTable").whereGreaterThan("deadlineForEntering",new Date());
@@ -195,6 +212,12 @@ public class VirtualTableDAO {
 
     private static void treatVirtualTableQueryResult(List<ParseObject> objects, IVirtualTableRetrievingResult callbackReceiver) {
 //        ArrayList<String> usersEmails = new ArrayList<String>();
+        if(objects == null) {
+            //No encontro ninguna table
+            callbackReceiver.retrievingSucceded(new ArrayList<VirtualTable>());
+            return;
+        }
+
         ListIterator<ParseObject> objectsli = objects.listIterator();
         ArrayList<VirtualTable>  virtualTables = new ArrayList<VirtualTable>();
 

@@ -45,6 +45,7 @@
     <string name="shr_cancel">Cancelar</string>
     <string name="shr_hint_auto_accept_vt">Auto aceptar comensales</string>
     <string name="shr_button_generate_vt">Crear mesa virtual</string>
+    <string name="shr_button_modify_vt">Modificar mesa virtual</string>
     <string name="shr_reservation_hint_datetime_vt">Fecha y hora limite para reservas</string>
     <string name="shr_hint_datetime_vt">Fecha y hora para la entrega</string>
     <string name="shr_date_vt">Hora de retiro</string>

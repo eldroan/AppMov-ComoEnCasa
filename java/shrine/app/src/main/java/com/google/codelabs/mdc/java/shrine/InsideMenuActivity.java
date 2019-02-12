@@ -95,7 +95,17 @@ public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUs
                         break;
                     case R.id.item_menu_generate_vt:
                         myToolbar.setTitle(getString(R.string.shr_button_generate_vt));
+                        Bundle b1 = new Bundle();
+                        b1.putBoolean("modify",false);
                         fragment = new GenerarMesaFragment();
+                        fragment.setArguments(b1);
+                        break;
+                    case R.id.item_menu_edit_vt:
+                        myToolbar.setTitle(getString(R.string.shr_button_generate_vt));
+                        Bundle b2 = new Bundle();
+                        b2.putBoolean("modify",true);
+                        fragment = new GenerarMesaFragment();
+                        fragment.setArguments(b2);
                         break;
                 }
 
