@@ -172,7 +172,7 @@ public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUs
     }
     @Override
     protected void onActivityResult(int reqCode,int resCode, Intent data) {
-
+        super.onActivityResult(reqCode,resCode, data);
         if (reqCode == 1337 && resCode == RESULT_OK) {
 
             if(pictureReceiver == null)
