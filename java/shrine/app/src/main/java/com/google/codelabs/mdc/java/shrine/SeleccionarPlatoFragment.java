@@ -34,7 +34,7 @@ import static com.parse.Parse.getApplicationContext;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDAO.IVirtualTableRetrievingResult{
+public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDAO.IVirtualTableRetrievingResult, VirtualTableDAO.ISuscribeToTables{
 
     private Button filter_button;
     private ListView listViewVirtualTables;
@@ -42,6 +42,7 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
     List<VirtualTable> virtualTables;
     public Context myContext;
     private DialogInterface.OnClickListener dialogClickListener;
+    private SeleccionarPlatoFragment thisFragment;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
         View view = inflater.inflate(R.layout.shr_fragment_seleccionar_plato, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.shr_app_name));
+        thisFragment=this;
 
         filter_button = (Button) view.findViewById(R.id.filter_button);
         listViewVirtualTables = (ListView) view.findViewById(R.id.listViewVirtualTables);
@@ -58,32 +60,7 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
 
         VirtualTableDAO.retrieveAllOpenVirtualTables(this);
 
-        dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast t = Toast.makeText(getActivity().getApplicationContext(),"SI",Toast.LENGTH_SHORT);
-                                t.show();
-                            }
-                        });
-                        break;
 
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast t = Toast.makeText(getActivity().getApplicationContext(),"NO",Toast.LENGTH_SHORT);
-                                t.show();
-                            }
-                        });
-                        break;
-                }
-            }
-        };
 
         filter_button.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -100,19 +77,44 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
+                final VirtualTable vt = (VirtualTable) parent.getItemAtPosition(position);
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast t = Toast.makeText(getActivity().getApplicationContext(),"Tocaste el item numero" + position,Toast.LENGTH_SHORT);
-                        t.show();
-                    }
-                });
+                if(vt.currentlyEating<vt.maxEating)
+                {
+                    dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    VirtualTableDAO.addEatingPersonToVirtualTable(vt.objectId,getActivity(),thisFragment);
+                                    break;
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Theme_MaterialComponents_Light_Dialog_MinWidth_ComoEnCasa));
-                builder.setMessage("¿Desea unirse a esta mesa?").setPositiveButton("Si", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show();
-
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast t = Toast.makeText(getActivity().getApplicationContext(),"Vos te lo perdiste",Toast.LENGTH_SHORT);
+                                            t.show();
+                                        }
+                                    });
+                                    break;
+                            }
+                        }
+                    };
+                    AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Theme_MaterialComponents_Light_Dialog_MinWidth_ComoEnCasa));
+                    builder.setMessage("¿Desea unirse a esta mesa "+vt.title +" de "+ vt.chef.name+" " + vt.chef.surname + "?" + "\nCosto: $ "+ vt.price).setPositiveButton("Si", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+                }
+                else
+                {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast t = Toast.makeText(getActivity().getApplicationContext(),"La mesa a la cual quiere entrar está llena",Toast.LENGTH_LONG);
+                            t.show();
+                        }
+                    });
+                }
             }
         });
 
@@ -141,5 +143,14 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
                 listViewVirtualTables.setAdapter(virtualTableAdapter);
             }
         });
+    }
+
+    @Override
+    public void subscribedSuccesfully() {
+        SeleccionarPlatoFragment fr = new SeleccionarPlatoFragment();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.content_frame, fr)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
     }
 }

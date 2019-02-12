@@ -158,6 +158,8 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
             }
         });
 
+
+
         getLocationPermission(savedInstanceState);
         initGoogleMap(savedInstanceState);
 
@@ -240,7 +242,6 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
             if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
                     Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 mLocationPermissionsGranted = true;
-                updateMap();
             }else{
                 ActivityCompat.requestPermissions(getActivity(),
                         permissions,
