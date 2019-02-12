@@ -1,5 +1,7 @@
 package com.google.codelabs.mdc.java.shrine;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -31,10 +33,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class RegisterFragment extends Fragment implements UserDAO.IUserCreation, IReceivePicture, View.OnClickListener {
@@ -291,6 +296,7 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
                 break;
             case R.id.select_picture_button:
                 //To - Do
+                    pickImage();
                 break;
             case R.id.register_user_button:
                 if(isPasswordValid(passwordEditText.getText()) && photoBitmap != null){
@@ -313,4 +319,29 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
             break;
         }
     }
+
+
+    public void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent.createChooser(intent,"Seleccione la aplicación"),10);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == 10) {
+
+            Uri returnUri = data.getData();
+            Bitmap bitmapImage = null;
+            try {
+                bitmapImage = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), returnUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            roundImage.setImageBitmap(bitmapImage);
+
+        }
+    }
+
 }
