@@ -2,7 +2,8 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent">
 
     <LinearLayout
         android:orientation="vertical"
@@ -29,6 +30,7 @@
             android:id="@+id/sidebar_username"
             android:textSize="20dp"
             android:textAppearance="@style/Theme.Shrine"
+            android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:layout_gravity="bottom"
             android:layout_marginBottom="10dp"
