@@ -146,7 +146,7 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
                         R.style.Theme_MaterialComponents_Light_Dialog_MinWidth_ComoEnCasa,
                         onDateSetListener,
                         rightNow.get(Calendar.YEAR),rightNow.get(Calendar.MONTH),rightNow.get(Calendar.DAY_OF_MONTH));
-                datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.LTGRAY));
+                datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
                 datePickerDialog.show();
             }
         });
@@ -178,7 +178,7 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
                         //android.R.style.Theme_Material_Dialog,
                         onTimeSetListener,
                         rightNow.get(Calendar.HOUR_OF_DAY),rightNow.get(Calendar.MINUTE),true);
-                timePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.LTGRAY));
+                timePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
                 timePickerDialog.show();
             }
         };

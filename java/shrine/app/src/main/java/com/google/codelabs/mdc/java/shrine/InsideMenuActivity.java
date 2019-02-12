@@ -34,7 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUserModelReceiver,ITakePicture {
     private NavigationView navview;
     private DrawerLayout mDrawerLayout;
-    private User usuario;
+    public User usuario;
     static IReceivePicture pictureReceiver;
     String pathPhoto;
 
