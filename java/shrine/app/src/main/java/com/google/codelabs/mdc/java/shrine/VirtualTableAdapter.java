@@ -17,6 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class VirtualTableAdapter extends ArrayAdapter<VirtualTable> {
 
 
@@ -41,7 +43,7 @@ public class VirtualTableAdapter extends ArrayAdapter<VirtualTable> {
 
             holderVirtualTable = new VirtualTableHolder();
 
-            holderVirtualTable.virtual_table_image = (ImageView) convertView.findViewById(R.id.virtual_table_image);
+            holderVirtualTable.virtual_table_image = (CircleImageView) convertView.findViewById(R.id.virtual_table_image);
             holderVirtualTable.virtual_table_title = (TextView) convertView.findViewById(R.id.virtual_table_title);
             holderVirtualTable.virtual_table_chef = (TextView) convertView.findViewById(R.id.virtual_table_chef);
             holderVirtualTable.virtual_table_data = (TextView) convertView.findViewById(R.id.virtual_table_data);
@@ -81,7 +83,7 @@ public class VirtualTableAdapter extends ArrayAdapter<VirtualTable> {
     }
 
     private static class VirtualTableHolder{
-        public ImageView virtual_table_image;
+        public CircleImageView virtual_table_image;
         public TextView virtual_table_title;
         public TextView virtual_table_chef;
         public TextView virtual_table_data;

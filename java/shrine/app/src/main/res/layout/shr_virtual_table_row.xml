@@ -4,23 +4,34 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
-        <ImageView
+        <!--ImageView
             android:id="@+id/virtual_table_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
-            app:srcCompat="@mipmap/ic_como_en_casa_round" />
+            app:srcCompat="@mipmap/ic_como_en_casa_round" /-->
+
+        <de.hdodenhof.circleimageview.CircleImageView
+          android:id="@+id/virtual_table_image"
+          android:layout_width="100dp"
+          android:layout_height="100dp"
+          android:layout_gravity="center_horizontal"
+          app:srcCompat="@mipmap/ic_como_en_casa_round" />
+
 
         <LinearLayout
-            android:layout_width="180dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_toRightOf="@id/virtual_table_image">
 
             <TextView
                 android:id="@+id/virtual_table_title"
@@ -58,32 +69,37 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="3dp"
+            android:layout_gravity="right"
+            android:gravity="right"
             android:orientation="vertical"
-            android:layout_marginRight="3dp">
-
+            android:layout_alignParentRight="true">
 
             <TextView
                 android:id="@+id/virtual_table_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="3dp"
-                android:layout_marginTop="3dp"
-                android:text="$ 999,99"
+                android:layout_marginTop="7dp"
+                android:layout_gravity="right"
+
+                android:text="$ 999999,99"
                 android:textSize="16sp"
-                android:textStyle="bold"  />
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_gravity="right"
                 android:layout_marginTop="3dp"
-                android:layout_gravity="right">
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center_horizontal"
                     app:srcCompat="@drawable/ic_star_black_24dp" />
+
                 <TextView
                     android:id="@+id/virtual_table_stars"
                     android:layout_width="wrap_content"
@@ -92,5 +108,5 @@
                     android:textSize="15dp" />
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

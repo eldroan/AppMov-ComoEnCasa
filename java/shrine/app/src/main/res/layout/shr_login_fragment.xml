@@ -16,19 +16,20 @@
         android:padding="24dp"
         android:paddingTop="16dp">
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_gravity="center_horizontal"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_marginTop="48dp"
             android:layout_marginBottom="16dp"
-            app:srcCompat="@mipmap/ic_como_en_casa_round" />
+            android:src="@mipmap/ic_como_en_casa_round"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="132dp"
+            android:layout_marginBottom="75dp"
             android:text="@string/shr_app_name"
             android:textAllCaps="true"
             android:textSize="16dp" />

@@ -10,10 +10,12 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class SplashScreenActivity extends AppCompatActivity {
     private static int timeout = 1000;
     TextView txt;
-    ImageView img;
+    CircleImageView img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
