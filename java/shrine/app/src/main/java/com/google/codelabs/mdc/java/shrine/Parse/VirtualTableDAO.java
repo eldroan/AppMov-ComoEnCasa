@@ -34,6 +34,9 @@ public class VirtualTableDAO {
         void retrievingFailed(ParseException error);
         void retrievingSucceded(List<VirtualTable> results);
     }
+    public interface ISuscribeToTables{
+        void subscribedSuccesfully();
+    }
 
     public static void saveVirtualTable(final VirtualTable virtualTableModel, final IVirtualTablePersistanceResult callbackReceiver) {
         if(virtualTableModel.objectId == null || virtualTableModel.objectId.isEmpty()){
@@ -211,7 +214,7 @@ public class VirtualTableDAO {
 
     }
 
-    public static void addEatingPersonToVirtualTable(String objectId, final Activity c){
+    public static void addEatingPersonToVirtualTable(String objectId, final Activity c, final ISuscribeToTables callbackReceiver){
         ParseQuery<ParseObject> query = ParseQuery.getQuery("VirtualTable");
         query.getInBackground(objectId, new GetCallback<ParseObject>() {
             @Override
@@ -228,6 +231,7 @@ public class VirtualTableDAO {
                                     @Override
                                     public void run() {
                                         Toast.makeText(c,"Se subscribio a la mesa",Toast.LENGTH_SHORT).show();
+                                        callbackReceiver.subscribedSuccesfully();
                                     }
                                 });
                             } catch (ParseException e1) {
