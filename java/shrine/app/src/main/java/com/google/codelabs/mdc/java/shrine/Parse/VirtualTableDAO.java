@@ -9,6 +9,7 @@ import com.google.codelabs.mdc.java.shrine.Model.User;
 import com.google.codelabs.mdc.java.shrine.Model.VirtualTable;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -195,10 +196,31 @@ public class VirtualTableDAO {
 
     }
 
-    public static void retrieveAllWhithinRange(Double latitude, Double longitude, Double kilometers, final IVirtualTableRetrievingResult callbackReceiver){
+    public static void retrieveWithFilters(Double latitude, Double longitude, Double kilometers, Double price, Date maxDeliveryTime, Integer paymentMethod,String name, final IVirtualTableRetrievingResult callbackReceiver){
         ParseGeoPoint geoPoint = new ParseGeoPoint(latitude,longitude);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("VirtualTable").whereGreaterThan("deadlineForEntering",new Date()).whereWithinKilometers("latlon",geoPoint,kilometers );
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("VirtualTable").whereGreaterThan("deadlineForEntering",new Date());
+
+        if(latitude != null && kilometers != null && longitude != null){
+            ParseGeoPoint pgp = new ParseGeoPoint(latitude,longitude);
+            query = query.whereWithinKilometers("latlon",pgp,kilometers);
+        }
+
+        if(price != null){
+            query = query.whereLessThan("price",price);
+        }
+
+        if(maxDeliveryTime != null){
+            query = query.whereLessThan("deadlineForEntering",maxDeliveryTime);
+        }
+
+        if(paymentMethod != null){
+            query = query.whereEqualTo("paymentMethod",paymentMethod);
+        }
+
+        if(name != null){
+            query = query.whereEqualTo("title",name );
+        }
 
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
