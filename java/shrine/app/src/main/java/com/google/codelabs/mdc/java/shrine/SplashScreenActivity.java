@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class SplashScreenActivity extends AppCompatActivity {
-    private static int timeout = 2000;
+    private static int timeout = 1000;
     TextView txt;
     ImageView img;
 
@@ -24,14 +24,14 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         Animation animation2 = AnimationUtils.loadAnimation(SplashScreenActivity.this,R.animator.splash_screen_animation);
 //        img.startAnimation(animation);
-        txt.startAnimation(animation2);
+       // txt.startAnimation(animation2);
 
         Animation animation = AnimationUtils.loadAnimation(SplashScreenActivity.this, R.animator.splash_screen_animation2);
         animation.setInterpolator(new LinearInterpolator());
         animation.setRepeatCount(Animation.INFINITE);
         animation.setDuration(700);
         img.startAnimation(animation);
-        //txt.startAnimation(animation);
+        txt.startAnimation(animation);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
