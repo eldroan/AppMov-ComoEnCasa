@@ -150,29 +150,6 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
         return view;
     }
 
-//    //Implemente onSaveInstanceState para guardar photoBitmap pero no se si es necesario porque es Parcelable, esto hay que preguntarle a martin en la defensa.
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        if(photoBitmap != null){
-//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//            photoBitmap.compress(Bitmap.CompressFormat.PNG,100,stream);
-//            outState.putByteArray("photoBitmapByteArray",stream.toByteArray());
-//        }
-//
-//    }
-//
-//    //Implemente onActivityCreated para recuperar el photoBitmap pero no se si es necesario porque es Parcelable, esto hay que preguntarle a martin en la defensa.
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        if(savedInstanceState != null && savedInstanceState.containsKey("photoBitmapByteArray")){
-//            byte[] photoBitmapByteArray = savedInstanceState.getByteArray("photoBitmapByteArray");
-//            Bitmap bmp = BitmapFactory.decodeByteArray(photoBitmapByteArray, 0, photoBitmapByteArray.length);
-//            photoBitmap = bmp.copy(Bitmap.Config.ARGB_8888, true);
-//        }
-//
-//    }
 
     private boolean validateUserFields(User modelUser){
 
@@ -301,6 +278,8 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
             //Hacer algo con este bitmap
             roundImage.setImageBitmap(imageBitmap);
             photoBitmap = imageBitmap;
+            comprimirImagen(photoBitmap,true);
+
         }else{
             Log.d("Register","El bitmap fue null");
         }
@@ -354,7 +333,7 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
             try {
                 photoBitmap = MediaStore.Images.Media.getBitmap(getActivity().getApplicationContext().getContentResolver(), returnUri);
                 roundImage.setImageBitmap(photoBitmap);
-                comprimirImagen(photoBitmap);
+                comprimirImagen(photoBitmap,false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -363,7 +342,7 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
         }
     }
 
-    private void comprimirImagen(final Bitmap imagen){
+    private void comprimirImagen(final Bitmap imagen, final boolean rotate){
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -376,6 +355,9 @@ public class RegisterFragment extends Fragment implements UserDAO.IUserCreation,
                 Bitmap decoded = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
                 Matrix matrix = new Matrix();
+
+                if(rotate)
+                    matrix.postRotate(90);
 
                 Bitmap rotatedBitmap = Bitmap.createBitmap(decoded, 0, 0, decoded.getWidth(), decoded.getHeight(), matrix, true);
                 photoBitmap = rotatedBitmap;
