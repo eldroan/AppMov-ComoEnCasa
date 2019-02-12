@@ -1,16 +1,20 @@
 package com.google.codelabs.mdc.java.shrine;
 
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -37,6 +41,7 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
     private VirtualTableAdapter virtualTableAdapter;
     List<VirtualTable> virtualTables;
     public Context myContext;
+    private DialogInterface.OnClickListener dialogClickListener;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,15 +51,39 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.shr_app_name));
 
-
-
         filter_button = (Button) view.findViewById(R.id.filter_button);
         listViewVirtualTables = (ListView) view.findViewById(R.id.listViewVirtualTables);
         Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-
         virtualTables = new ArrayList<>();
 
         VirtualTableDAO.retrieveAllOpenVirtualTables(this);
+
+        dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast t = Toast.makeText(getActivity().getApplicationContext(),"SI",Toast.LENGTH_SHORT);
+                                t.show();
+                            }
+                        });
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast t = Toast.makeText(getActivity().getApplicationContext(),"NO",Toast.LENGTH_SHORT);
+                                t.show();
+                            }
+                        });
+                        break;
+                }
+            }
+        };
 
         filter_button.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -64,6 +93,26 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .addToBackStack(null)
                         .commit();
+            }
+        });
+
+        listViewVirtualTables.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast t = Toast.makeText(getActivity().getApplicationContext(),"Tocaste el item numero" + position,Toast.LENGTH_SHORT);
+                        t.show();
+                    }
+                });
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Theme_MaterialComponents_Light_Dialog_MinWidth_ComoEnCasa));
+                builder.setMessage("¿Desea unirse a esta mesa?").setPositiveButton("Si", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
             }
         });
 
