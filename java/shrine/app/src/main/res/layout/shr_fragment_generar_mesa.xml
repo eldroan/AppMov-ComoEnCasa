@@ -29,9 +29,7 @@
             android:id="@+id/generate_virtual_table_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:src="@mipmap/ic_como_en_casa"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000"/>
+            android:src="@mipmap/ic_como_en_casa"/>
 
         <LinearLayout
             android:layout_width="match_parent"

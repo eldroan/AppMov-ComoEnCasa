@@ -1,38 +1,41 @@
 package com.google.codelabs.mdc.java.shrine;
 
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-//import android.support.v4.app.Fragment;
-import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.google.codelabs.mdc.java.shrine.Model.*;
+import com.google.codelabs.mdc.java.shrine.Model.VirtualTable;
+import com.google.codelabs.mdc.java.shrine.Parse.VirtualTableDAO;
+import com.parse.ParseException;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import static com.parse.Parse.getApplicationContext;
+
+//import android.support.v4.app.Fragment;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SeleccionarPlatoFragment extends Fragment {
+public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDAO.IVirtualTableRetrievingResult{
 
     private Button filter_button;
     private ListView listViewVirtualTables;
     private VirtualTableAdapter virtualTableAdapter;
+    List<VirtualTable> virtualTables;
     public Context myContext;
 
     @Override
@@ -49,29 +52,9 @@ public class SeleccionarPlatoFragment extends Fragment {
         listViewVirtualTables = (ListView) view.findViewById(R.id.listViewVirtualTables);
         Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
 
-        List<VirtualTable> vt = new ArrayList<>();
+        virtualTables = new ArrayList<>();
 
-        for (int i = 0; i < 25; i++) {
-            VirtualTable vtx = new VirtualTable();
-            User us = new User();
-
-            us.name = "Usuario" +i;
-            us.surname =  "Surename" +i;
-            us.score = i + 0.88f;
-
-            vtx.chef = us;
-            vtx.currentlyEating = 2+i;
-            vtx.image = bitmap;
-            vtx.paymentMethod = 1;
-            vtx.title = "COMIDA "+i;
-            vtx.price = i + 100.69f;
-            vtx.deliveryTime = new Date();
-
-            vt.add(vtx);
-        }
-
-        virtualTableAdapter = new VirtualTableAdapter(this.getActivity(), vt);
-        listViewVirtualTables.setAdapter(virtualTableAdapter);
+        VirtualTableDAO.retrieveAllOpenVirtualTables(this);
 
         filter_button.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -88,5 +71,26 @@ public class SeleccionarPlatoFragment extends Fragment {
     }
 
 
+    @Override
+    public void retrievingFailed(ParseException error) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final Toast toast = Toast.makeText(getApplicationContext(), "Falló al llenar la lista", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
+    }
 
+    @Override
+    public void retrievingSucceded(List<VirtualTable> results) {
+        virtualTables = results;
+        virtualTableAdapter = new VirtualTableAdapter(this.getActivity(), virtualTables);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                listViewVirtualTables.setAdapter(virtualTableAdapter);
+            }
+        });
+    }
 }
