@@ -46,9 +46,9 @@ public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUs
         setContentView(R.layout.shr_inside_menu_activity);
 
         SeleccionarPlatoFragment fr = new SeleccionarPlatoFragment();
-        Bundle b = new Bundle();
-        b.putBoolean("all",true);
-        fr.setArguments(b);
+//        Bundle b = new Bundle();
+//        b.putBoolean("all",true);
+//        fr.setArguments(b);
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.content_frame, fr)
@@ -74,11 +74,11 @@ public class InsideMenuActivity extends AppCompatActivity implements UserDAO.IUs
                 switch (id) {
                     case R.id.item_menu_inicio:
                         myToolbar.setTitle(getString(R.string.shr_app_name));
-                        Bundle b = new Bundle();
-                        b.putBoolean("all",true);
+//                        Bundle b = new Bundle();
+//                        b.putBoolean("all",true);
 
                         fragment = new SeleccionarPlatoFragment();
-                        fragment.setArguments(b);
+//                        fragment.setArguments(b);
                         break;
                     case R.id.item_menu_direcciones:
                         myToolbar.setTitle(getString(R.string.shr_direcciones));

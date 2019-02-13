@@ -59,16 +59,23 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
         Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
         virtualTables = new ArrayList<>();
 
-        Bundle b = getArguments();
-        if(b != null){
+//        Bundle b = getArguments();
+//        if(b != null){
+//
+//            Boolean shouldRetrieveAll = b.getBoolean("all",false);
+//            if(shouldRetrieveAll){
+//                VirtualTableDAO.retrieveAllOpenVirtualTables(this);
+//                b.putBoolean("all",false); //Esto se hace asi porque sino cada vez que se volvia del filtro el fragmente le pedia al backend todos las mesas y pisaba el resultado filtrado
+//                setArguments(b);
+//            }
+//
+//        }
+        boolean filter =getActivity().getIntent().getBooleanExtra("filter",false);
 
-            Boolean shouldRetrieveAll = b.getBoolean("all",false);
-            if(shouldRetrieveAll){
-                VirtualTableDAO.retrieveAllOpenVirtualTables(this);
-                b.putBoolean("all",false); //Esto se hace asi porque sino cada vez que se volvia del filtro el fragmente le pedia al backend todos las mesas y pisaba el resultado filtrado
-                setArguments(b);
-            }
-
+        if(filter){
+            getActivity().getIntent().putExtra("filter",false);
+        }else{
+            VirtualTableDAO.retrieveAllOpenVirtualTables(this);
         }
 
         //VirtualTableDAO.retrieveAllOpenVirtualTables(this);

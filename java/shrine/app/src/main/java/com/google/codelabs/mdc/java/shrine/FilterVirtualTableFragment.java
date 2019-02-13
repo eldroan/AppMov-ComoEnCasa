@@ -16,6 +16,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 //import android.support.v4.app.Fragment;
 import android.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -195,7 +196,9 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
                 VirtualTableDAO.retrieveWithFilters(myCurrentLocation.getLatitude(),myCurrentLocation.getLongitude(),radiusKM,price,dateAprox,payMethod,title,callbackReceiver);
 
                 hideKeyboard(getActivity());
+                getActivity().getIntent().putExtra("filter",true);
                 getActivity().onBackPressed();
+
 
             }
         });
