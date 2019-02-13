@@ -43,12 +43,13 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
     public Context myContext;
     private DialogInterface.OnClickListener dialogClickListener;
     private SeleccionarPlatoFragment thisFragment;
+    private View view;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.shr_fragment_seleccionar_plato, container, false);
+         view = inflater.inflate(R.layout.shr_fragment_seleccionar_plato, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(getString(R.string.shr_app_name));
         thisFragment=this;
@@ -58,7 +59,19 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
         Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
         virtualTables = new ArrayList<>();
 
-        VirtualTableDAO.retrieveAllOpenVirtualTables(this);
+        Bundle b = getArguments();
+        if(b != null){
+
+            Boolean shouldRetrieveAll = b.getBoolean("all",false);
+            if(shouldRetrieveAll){
+                VirtualTableDAO.retrieveAllOpenVirtualTables(this);
+                b.putBoolean("all",false); //Esto se hace asi porque sino cada vez que se volvia del filtro el fragmente le pedia al backend todos las mesas y pisaba el resultado filtrado
+                setArguments(b);
+            }
+
+        }
+
+        //VirtualTableDAO.retrieveAllOpenVirtualTables(this);
 
 
 
@@ -66,7 +79,9 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
             @Override
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.content_frame, new FilterVirtualTableFragment())
+                FilterVirtualTableFragment fvt = new FilterVirtualTableFragment();
+                fvt.callbackReceiver = thisFragment;
+                fragmentTransaction.replace(R.id.content_frame, fvt)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                         .addToBackStack(null)
                         .commit();
@@ -153,4 +168,5 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
+
 }

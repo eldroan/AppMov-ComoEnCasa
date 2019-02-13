@@ -1,10 +1,13 @@
 package com.google.codelabs.mdc.java.shrine;
 import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.inputmethodservice.Keyboard;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.DatePicker;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
@@ -37,7 +41,10 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.codelabs.mdc.java.shrine.Parse.VirtualTableDAO;
+
 import java.util.Calendar;
+import java.util.Date;
 
 import static com.android.volley.VolleyLog.TAG;
 
@@ -45,6 +52,7 @@ import static com.android.volley.VolleyLog.TAG;
  * A simple {@link Fragment} subclass.
  */
 public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCallback {
+    public VirtualTableDAO.IVirtualTableRetrievingResult callbackReceiver;
 
     public static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
@@ -70,7 +78,8 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
     Circle mapCircle;
     private String fecha;
     private String hora;
-
+    private Calendar dateEat;
+    private Location myCurrentLocation;
 
     public FilterVirtualTableFragment() {
         // Required empty public constructor
@@ -80,7 +89,7 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.shr_fragment_filter_virtual_table, container, false);
+        final View view = inflater.inflate(R.layout.shr_fragment_filter_virtual_table, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         radio_filter_vt_seekbar = view.findViewById(R.id.radio_filter_vt_seekbar);
@@ -158,6 +167,39 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
             }
         });
 
+        filter_vt_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float radiusInMeters = (450f+(radio_filter_vt_seekbar.getProgress()*150f));
+                Double radiusKM = new Double(radiusInMeters)  * 0.001d;
+                String title;
+                if(title_filter_vt_textl.getText().toString().isEmpty()){
+                    title = null;
+                }else{
+                    title = title_filter_vt_textl.getText().toString();
+                }
+                Double price;
+                if(max_price_filter_vt_text.getText().toString().isEmpty()){
+                    price = null;
+                }else{
+                    price = Double.parseDouble(max_price_filter_vt_text.getText().toString());
+                }
+                Integer minScore = min_score_vt_seekbar.getProgress(); //No anda por ahora
+                Date dateAprox = null;
+                if(dateEat != null){
+                    dateAprox = dateEat.getTime();
+                }
+
+                Integer payMethod = cash_radio_button.isChecked() ? 0 : 1; //Harcodeada cosmica, no anda con mas de 2
+
+                VirtualTableDAO.retrieveWithFilters(myCurrentLocation.getLatitude(),myCurrentLocation.getLongitude(),radiusKM,price,dateAprox,payMethod,title,callbackReceiver);
+
+                hideKeyboard(getActivity());
+                getActivity().onBackPressed();
+
+            }
+        });
+
 
 
         getLocationPermission(savedInstanceState);
@@ -175,6 +217,10 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
                 Calendar rightNow = Calendar.getInstance();
                 month = month + 1;
                 fecha = month + "/" + dayOfMonth + "/" + year;
+
+                dateEat = Calendar.getInstance();
+                dateEat.set(year,month,dayOfMonth);
+
                 TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(),
                         R.style.Theme_MaterialComponents_Light_Dialog_MinWidth_ComoEnCasa,
                         //android.R.style.Theme_Material_Dialog,
@@ -190,6 +236,7 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 hora = hourOfDay + ":" + minute;
+                dateEat.set(dateEat.get(Calendar.YEAR), dateEat.get(Calendar.MONTH), dateEat.get(Calendar.DAY_OF_MONTH), hourOfDay,minute);
                 if(fecha != null && hora!= null)
                 {
                     date_aprox_filter_vt_text.setText(fecha +" a las "+hora);
@@ -197,6 +244,7 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
                 else
                 {
                     date_aprox_filter_vt_text.setText("");
+                    dateEat = null;
                 }
             }
         };
@@ -272,6 +320,10 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
 
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                     zoomValue);
+
+//                            myCurrentLocation.setLatitude(currentLocation.getLatitude());
+//                            myCurrentLocation.setLongitude(currentLocation.getLongitude());
+                            myCurrentLocation = currentLocation;
 
                             UpdateMapRadius(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
 
@@ -390,6 +442,17 @@ public class FilterVirtualTableFragment extends Fragment implements OnMapReadyCa
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager inputManager = (InputMethodManager) activity
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        // check if no view has focus:
+        View currentFocusedView = activity.getCurrentFocus();
+        if (currentFocusedView != null) {
+            inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
 
