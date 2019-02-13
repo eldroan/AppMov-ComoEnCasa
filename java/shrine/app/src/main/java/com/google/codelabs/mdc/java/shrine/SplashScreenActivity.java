@@ -24,7 +24,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         txt=findViewById(R.id.text_splash);
         img=findViewById(R.id.img_splash);
 
-        Animation animation2 = AnimationUtils.loadAnimation(SplashScreenActivity.this,R.animator.splash_screen_animation);
+//        Animation animation2 = AnimationUtils.loadAnimation(SplashScreenActivity.this,R.animator.splash_screen_animation);
 //        img.startAnimation(animation);
        // txt.startAnimation(animation2);
 
@@ -42,6 +42,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 Intent intent = new Intent(SplashScreenActivity.this,MainActivity.class);
                 startActivity(intent);
                 finish();
+                overridePendingTransition(R.animator.splash_screen_animation,R.animator.splash_screen_animation);
             }
         },timeout);
 
