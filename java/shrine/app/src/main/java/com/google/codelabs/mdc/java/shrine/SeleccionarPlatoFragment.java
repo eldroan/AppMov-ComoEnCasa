@@ -158,7 +158,7 @@ public class SeleccionarPlatoFragment extends Fragment implements VirtualTableDA
     @Override
     public void retrievingSucceded(List<VirtualTable> results) {
         virtualTables = results;
-        virtualTableAdapter = new VirtualTableAdapter(this.getActivity(), virtualTables);
+        virtualTableAdapter = new VirtualTableAdapter(this.getActivity(), virtualTables, getActivity());
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
